@@ -3,9 +3,6 @@
 return [
 
     'action'                => 'Ação',
-    'print'                 => '<i class="fas fa-print datatable-icons"></i> Imprimir',
-    'reload'                => '<i class="fas fa-sync-alt datatable-icons"></i> Recarregar',
-    'csv'                   => '<i class="fas fa-download datatable-icons"></i> Exportar',
     'colvis'                => '<i class="fas fa-columns datatable-icons"></i> Colunas visíveis',
     'page_length'           => '<i class="fas fa-sort datatable-icons"></i> %d registros por página',
     'length_menu'           => 'Mostrar _MENU_ linhas',
