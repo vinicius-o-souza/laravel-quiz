@@ -45,9 +45,9 @@
         "laravel": {
             "providers": [
                 "PandoApps\\Quiz\\QuizServiceProvider",
-                "yajra\\DataTables\\DataTablesServiceProvider",
-                "yajra\\DataTables\\ButtonsServiceProvider",
-                "yajra\\DataTables\\HtmlServiceProvider"
+                "Yajra\\DataTables\\DataTablesServiceProvider",
+                "Yajra\\DataTables\\ButtonsServiceProvider",
+                "Yajra\\DataTables\\HtmlServiceProvider"
             ],
             "aliases": {
                 "Quiz": "PandoApps\\Quiz\\Facades\\Quiz"
