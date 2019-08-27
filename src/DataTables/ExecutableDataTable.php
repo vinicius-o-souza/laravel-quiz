@@ -2,6 +2,7 @@
 
 namespace PandoApps\Quiz\DataTables;
 
+use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Executable;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
@@ -17,13 +18,21 @@ class ExecutableDataTable extends DataTable
      */
     public function dataTable()
     {
+        $parentId = request()->parent_id;
+        $questionnaireId = request()->questionnaire_id;
         $modelId = request()->model_id;
         
+        $executables = Executable::whereHas('questionnaire', function (Builder $query) use ($parentId) {
+            $query->where('parent_id', $parentId);
+        });
         if($modelId) {
-            $executables = Executable::where('executable_id', $modelId)->with('questionnaire')->get();
-        } else {
-            $executables = Executable::all(); 
+            $executables->where('executable_id', $modelId);
         }
+        if($questionnaireId) {
+            $executables->where('questionnaire_id', $questionnaireId);
+        }
+        
+        $executables->get(); 
         
 
         return Datatables::of($executables)

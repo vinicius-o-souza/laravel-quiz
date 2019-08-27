@@ -3,8 +3,11 @@
 return [
 
     'action'                => 'Ação',
-    'colvis'                => '<i class="fas fa-columns datatable-icons"></i> Colunas visíveis',
-    'page_length'           => '<i class="fas fa-sort datatable-icons"></i> %d registros por página',
+    'print'                 => '<i class="fa fa-print datatable-icons"></i> Imprimir',
+    'reload'                => 'Recarregar',
+    'csv'                   => 'Exportar',
+    'colvis'                => '<i class="fa fa-columns datatable-icons"></i> Colunas visíveis',
+    'page_length'           => '<i class="fa fa-sort datatable-icons"></i> %d registros por página',
     'length_menu'           => 'Mostrar _MENU_ linhas',
     'search'                => 'Pesquisar: ',
     'empty_table'           => 'Não há registros nessa tabela',

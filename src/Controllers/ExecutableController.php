@@ -40,7 +40,7 @@ class ExecutableController extends Controller
         if(empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('executables.index', ['questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => request()->parent_id, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
         if($questionnaire->answer_once) {
@@ -48,7 +48,7 @@ class ExecutableController extends Controller
             if($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
 
-                return redirect(route('questionnaires.index'));
+                return redirect(route('questionnaires.index', request()->parent_id));
             }
         }
 
@@ -116,7 +116,7 @@ class ExecutableController extends Controller
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('questionnaires.index'));
+        return redirect(route('questionnaires.index', request()->parent_id));
     }
 
     /**

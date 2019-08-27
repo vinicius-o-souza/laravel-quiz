@@ -2,6 +2,7 @@
 
 namespace PandoApps\Quiz\DataTables;
 
+use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Alternative;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
@@ -17,12 +18,17 @@ class AlternativeDataTable extends DataTable
      */
     public function dataTable()
     {
+        $parent_id = request()->parent_id;
         $question_id = request()->question_id;
         
         if($question_id) {
-            $alternatives = Alternative::where('question_id', $question_id)->with('question')->get();    
+            $alternatives = Alternative::whereHas('question.questionnaire', function (Builder $query) use ($parent_id) {
+                                $query->where('parent_id', $parent_id);
+                            })->where('question_id', $question_id)->with('question')->get();    
         } else {
-            $alternatives = Alternative::all();
+            $alternatives = Alternative::whereHas('question.questionnaire', function (Builder $query) use ($parent_id) {
+                                $query->where('parent_id', $parent_id);
+                            })->get();
         }
         
         return Datatables::of($alternatives)

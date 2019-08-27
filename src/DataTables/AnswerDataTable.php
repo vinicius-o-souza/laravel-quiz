@@ -2,6 +2,7 @@
 
 namespace PandoApps\Quiz\DataTables;
 
+use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Answer;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
@@ -17,8 +18,9 @@ class AnswerDataTable extends DataTable
      */
     public function dataTable()
     {
+        $parent_id = request()->parent_id;
         $question_id = request()->question_id;
-        $answers = Answer::where('question_id', $question_id)->with('questions')->with('alternatives')->get();
+        $answers = Answer::where('question_id', $question_id)->with('questions.alternatives')->get();
 
         return Datatables::of($answers)
             ->addColumn('action' , 'pandoapps::answers.datatables_actions')

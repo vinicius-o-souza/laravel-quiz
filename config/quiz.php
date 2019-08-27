@@ -19,7 +19,7 @@ return [
         /*
         *   Tipo do Modelo que pertence o questionário
         */
-        'parent_questionnaire' => App\User::class
+        'parent_type' => App\User::class
 
     ],
 

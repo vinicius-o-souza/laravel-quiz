@@ -2,6 +2,7 @@
 
 namespace PandoApps\Quiz\DataTables;
 
+use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
@@ -17,12 +18,15 @@ class QuestionDataTable extends DataTable
      */
     public function dataTable()
     {
+        $parent_id = request()->parent_id;
         $questionnaire_id = request()->questionnaire_id;
         
         if($questionnaire_id) {
             $questions = Question::where('questionnaire_id', $questionnaire_id)->with('questionnaire')->with('questionType')->get();
         } else {
-            $questions = Question::all(); 
+            $questions = Question::whereHas('questionnaire', function (Builder $query) use ($parent_id) {
+                            $query->where('parent_id', $parent_id);
+                        })->get();
         }
         
 

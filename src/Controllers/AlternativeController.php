@@ -77,7 +77,7 @@ class AlternativeController extends Controller
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index'));
+            return redirect(route('alternatives.index', request()->parent_id));
         }
 
         return view('pandoapps::alternatives.show', compact('alternative'));
@@ -96,7 +96,7 @@ class AlternativeController extends Controller
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index'));
+            return redirect(route('alternatives.index', request()->parent_id));
         }
 
         return view('pandoapps::alternatives.edit', compact('alternative'));
@@ -116,7 +116,7 @@ class AlternativeController extends Controller
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index'));
+            return redirect(route('alternatives.index', request()->parent_id));
         }
 
         $input = $request->all();
@@ -140,7 +140,7 @@ class AlternativeController extends Controller
         
         flash('Alternativa atualizada com sucesso!')->success();
 
-        return redirect(route('alternatives.index'));
+        return redirect(route('alternatives.index', request()->parent_id));
     }
 
     /**
@@ -156,14 +156,14 @@ class AlternativeController extends Controller
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index'));
+            return redirect(route('alternatives.index', request()->parent_id));
         }
         
         $question = $alternative->question;
         if($question->alternatives()->count() == 1) {
             flash('Questões fechadas devem ter no mínimo 1 alternativa!')->error();
 
-            return redirect(route('alternatives.index'));
+            return redirect(route('alternatives.index', request()->parent_id));
         }
 
         $id = $alternative->id;
@@ -175,6 +175,6 @@ class AlternativeController extends Controller
 
         flash('Alternativa deletada com sucesso!')->success();
 
-        return redirect(route('alternatives.index', $id));
+        return redirect(route('alternatives.index', request()->parent_id));
     }
 }
