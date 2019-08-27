@@ -64,7 +64,7 @@ class AnswerController extends Controller
 
         flash('Resposta criada com sucesso!')->success();
 
-        return redirect(route('answer.index'));
+        return redirect(route('answer.index', request()->parent_id));
     }
 
     /**
@@ -80,7 +80,7 @@ class AnswerController extends Controller
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index'));
+            return redirect(route('answers.index', request()->parent_id));
         }
 
         return view('pandoapps::answers.show', compact('answer'));
@@ -99,7 +99,7 @@ class AnswerController extends Controller
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index'));
+            return redirect(route('answers.index', request()->parent_id));
         }
 
         return view('pandoapps::answers.edit', compact('answer'));
@@ -119,7 +119,7 @@ class AnswerController extends Controller
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index'));
+            return redirect(route('answers.index', request()->parent_id));
         }
 
         $input = $request->all();
@@ -139,7 +139,7 @@ class AnswerController extends Controller
 
         flash('Resposta atualizada com sucesso!')->success();
 
-        return redirect(route('answers.index'));
+        return redirect(route('answers.index', request()->parent_id));
     }
 
     /**
@@ -155,7 +155,7 @@ class AnswerController extends Controller
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index'));
+            return redirect(route('answers.index', request()->parent_id));
         }
 
         $id = $answer->id;
@@ -163,6 +163,6 @@ class AnswerController extends Controller
 
         flash('Resposta deletada com sucesso!')->success();
 
-        return redirect(route('answers.index', $id));
+        return redirect(route('answers.index', request()->parent_id));
     }
 }

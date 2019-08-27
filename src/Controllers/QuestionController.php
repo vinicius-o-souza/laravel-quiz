@@ -67,7 +67,7 @@ class QuestionController extends Controller
 
         flash('Questão criada com sucesso!')->success();
 
-        return redirect(route('questions.index', request()->questionnaire_id));
+        return redirect(route('questions.index', request()->parent_id));
     }
     
     /**
@@ -83,7 +83,7 @@ class QuestionController extends Controller
         if(empty($question)) {
             flash('Questão não encontrada!')->error();
 
-            return redirect(route('questions.index'));
+            return redirect(route('questions.index', request()->parent_id));
         }
 
         return view('pandoapps::questions.show', compact('question'));
@@ -104,7 +104,7 @@ class QuestionController extends Controller
         if(empty($question)) {
             flash('Questão não encontrada!')->error();
 
-            return redirect(route('questions.index'));
+            return redirect(route('questions.index', request()->parent_id));
         }
 
         return view('pandoapps::questions.edit', compact('question', 'questionsType'));
@@ -124,7 +124,7 @@ class QuestionController extends Controller
         if(empty($question)) {
             flash('Questão não encontrada!')->error();
 
-            return redirect(route('questions.index'));
+            return redirect(route('questions.index', request()->parent_id));
         }
 
         $input = $request->all();
@@ -144,7 +144,7 @@ class QuestionController extends Controller
 
         flash('Questão atualizada com sucesso!')->success();
 
-        return redirect(route('questions.index', request()->questionnaire_id));
+        return redirect(route('questions.index', request()->parent_id));
     }
 
     /**
@@ -160,7 +160,7 @@ class QuestionController extends Controller
         if(empty($question)) {
             flash('Questão não encontrada!')->error();
 
-            return redirect(route('questions.index'));
+            return redirect(route('questions.index', request()->parent_id));
         }
 
         $id = $question->id;
@@ -171,6 +171,6 @@ class QuestionController extends Controller
         } 
         flash('Questão deletada com sucesso!')->success();
 
-        return redirect(route('questions.index', request()->questionnaire_id));
+        return redirect(route('questions.index', request()->parent_id));
     }
 }

@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1 class="pull-left"> Questionários</h1>
         <h1 class="pull-right">
-            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('questionnaires.index') !!}">Voltar</a>
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('questionnaires.index', request()->parent_id) !!}">Voltar</a>
         </h1>
     </section>
     <div class="content">
@@ -17,7 +17,7 @@
         <div class="box box-primary">
             <div class="box-body">
                 <div class="row">
-                    {!! Form::model($questionnaire, ['route' => ['questionnaires.update', $questionnaire->id], 'method' => 'patch', 'class' => 'w-100']) !!}
+                    {!! Form::model($questionnaire, ['route' => ['questionnaires.update', request()->parent_id, $questionnaire->id], 'method' => 'patch', 'class' => 'w-100']) !!}
 
                         @include('pandoapps::questionnaires.fields')
 

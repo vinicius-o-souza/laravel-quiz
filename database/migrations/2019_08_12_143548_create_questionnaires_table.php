@@ -25,8 +25,8 @@ class CreateQuestionnairesTable extends Migration
             $table->string('name');
             $table->boolean('answer_once')->default(false);
 
-            $table->integer('parent_id')->nullable();
-            $table->string('parent_type')->nullable();
+            $table->integer('parent_id');
+            $table->string('parent_type');
 
             $table->timestamps();
         });

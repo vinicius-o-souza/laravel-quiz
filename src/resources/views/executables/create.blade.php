@@ -13,7 +13,7 @@
         <div class="clearfix"></div>
         <div class="box box-primary">
             <div class="box-body">
-                {!! Form::open(['route' => ['executables.store', $questionnaire->id, Auth::user()->id], 'class' => 'w-100']) !!}
+                {!! Form::open(['route' => ['executables.store', request()->parent_id, $questionnaire->id, request()->model_id], 'class' => 'w-100']) !!}
                     <div class="row p-md-5">
                         @foreach($questionnaire->questions as $key => $question)
                             <div class="form-group col-sm-12 col-md-6">
@@ -34,7 +34,7 @@
                         <!-- Submit Field -->
                         <div class="form-group col-sm-12 pt-5">
                             {!! Form::submit('Responder', ['class' => 'btn btn-primary']) !!}
-                            <a href="{!! route('executables.index', ['questionnaire_id' => $questionnaire->id, 'model_id' => Auth::user()->id]) !!}" class="btn btn-default">Cancelar</a>
+                            <a href="{!! route('executables.index', ['parent_id' => request()->parent_id, 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
                         </div>
                     </div>
                 {!! Form::close() !!}

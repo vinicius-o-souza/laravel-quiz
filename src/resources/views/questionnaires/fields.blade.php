@@ -30,7 +30,7 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12 pt-5">
     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('questionnaires.index') !!}" class="btn btn-default">Cancelar</a>
+    <a href="{!! route('questionnaires.index', request()->parent_id) !!}" class="btn btn-default">Cancelar</a>
 </div>
 
 @push('scripts_quiz')
@@ -203,7 +203,7 @@
             
             $('#question_' + thisIdQuestion).remove();
             
-            var countQuestion = $('.questions').length + 1;
+            var countQuestion = $('.questions').length;
             
             $('#countQuestion').val(countQuestion);
             
