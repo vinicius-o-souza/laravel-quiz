@@ -4,13 +4,6 @@ return [
 
     'models' => [
         
-
-        /*
-        *   Tipo do Modelo que responderá o questionário
-        */
-        'questionnaire' => PandoApps\Quiz\Models\Questionnaire::class,
-        
-
         /*
         *   Tipo do Modelo que responderá o questionário
         */
