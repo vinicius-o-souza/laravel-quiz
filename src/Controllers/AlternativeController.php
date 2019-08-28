@@ -22,47 +22,6 @@ class AlternativeController extends Controller
     {
         return $alternativeDataTable->render('pandoapps::alternatives.index');
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $questions = Question::where('questionnaire_id', request()->questionnaire_id)->orderBy('title','asc')->pluck('title','id')->toArray();
-
-        return view('pandoapps::alternatives.create', compact('questions'));
-    }
-
-     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $input = $request->all();
-
-        $alternativeValidation = Validator::make($input, Alternative::$rules);
-        if ($alternativeValidation->fails()) {
-            $errors = $alternativeValidation->errors();
-            $msg = '';
-            foreach($errors->all() as $message) {
-                $msg .= $message . '<br>';
-            }
-            flash($msg)->error();
-            return redirect()->back()->withInput();
-        }
-
-        Alternative::create([
-            'description' => $input['description'],
-            'question_id' => $input['question_id'],
-        ]);
-
-        flash('Alternativa criada com sucesso!')->success();
-    }
     
     /**
      * Display the specified resource.
@@ -100,47 +59,6 @@ class AlternativeController extends Controller
         }
 
         return view('pandoapps::alternatives.edit', compact('alternative'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update($id, Request $request)
-    {
-        $alternative = Alternative::find($id);
-
-        if(empty($alternative)) {
-            flash('Alternativa não encontrada!')->error();
-
-            return redirect(route('alternatives.index', request()->parent_id));
-        }
-
-        $input = $request->all();
-
-        $alternativeValidation = Validator::make($input, Alternative::$rules);
-        if ($alternativeValidation->fails()) {
-            $errors = $alternativeValidation->errors();
-            $msg = '';
-            foreach($errors->all() as $message) {
-                $msg .= $message . '<br>';
-            }
-            flash($msg)->error();
-            return redirect()->back()->withInput();
-        }
-
-        $alternative->update($input);
-
-        if(request()->ajax()) {
-            return response()->json(['status' => 'Questão deletada']);
-        }
-        
-        flash('Alternativa atualizada com sucesso!')->success();
-
-        return redirect(route('alternatives.index', request()->parent_id));
     }
 
     /**

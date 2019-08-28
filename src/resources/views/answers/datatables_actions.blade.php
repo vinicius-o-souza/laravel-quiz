@@ -1,9 +1,9 @@
-{!! Form::open(['route' => ['questionnaires.destroy', $id], 'method' => 'delete']) !!}
+{!! Form::open(['route' => ['answers.destroy', request()->parent_id, $id], 'method' => 'delete']) !!}
 <div class='btn-group'>
-    <a href="{{ route('questionnaires.show', $id) }}" class='btn btn-info'>
+    <a href="{{ route('answers.show', ['parent_id' => request()->parent_id, 'answer_id' => $id]) }}" class='btn btn-info'>
        <i class="fa fa-info-circle"></i>
     </a>
-    <a href="{{ route('questionnaires.edit', $id) }}" class='btn btn-warning'>
+    <a href="{{ route('answers.edit', ['parent_id' => request()->parent_id, 'answer_id' => $id]) }}" class='btn btn-warning'>
        <i class="fa fa-edit"></i>
     </a>
     {!! Form::button('<i class="fa fa-trash"></i>', [
