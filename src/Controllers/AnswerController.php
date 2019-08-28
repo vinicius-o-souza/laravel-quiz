@@ -26,17 +26,18 @@ class AnswerController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  int  $parenId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($parentId, $id)
     {
         $answer = Answer::find($id);
 
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index', request()->parent_id));
+            return redirect(route('answers.index', $parentId));
         }
 
         return view('pandoapps::answers.show', compact('answer'));
@@ -45,17 +46,18 @@ class AnswerController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
+     * @param  int  $parenId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($parentId, $id)
     {
         $answer = Answer::find($id);
 
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index', request()->parent_id));
+            return redirect(route('answers.index', $parentId));
         }
 
         return view('pandoapps::answers.edit', compact('answer'));
@@ -64,17 +66,18 @@ class AnswerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  int  $parenId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($parentId, $id)
     {
         $answer = Answer::find($id);
 
         if(empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
-            return redirect(route('answers.index', request()->parent_id));
+            return redirect(route('answers.index', $parentId));
         }
 
         $id = $answer->id;
@@ -82,6 +85,6 @@ class AnswerController extends Controller
 
         flash('Resposta deletada com sucesso!')->success();
 
-        return redirect(route('answers.index', request()->parent_id));
+        return redirect(route('answers.index', $parentId));
     }
 }

@@ -26,17 +26,18 @@ class AlternativeController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  int  $parenId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($parentId, $id)
     {
         $alternative = Alternative::find($id);
 
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index', request()->parent_id));
+            return redirect(route('alternatives.index', $parentId));
         }
 
         return view('pandoapps::alternatives.show', compact('alternative'));
@@ -45,17 +46,18 @@ class AlternativeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
+     * @param  int  $parenId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($parentId, $id)
     {
         $alternative = Alternative::find($id);
 
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index', request()->parent_id));
+            return redirect(route('alternatives.index', $parentId));
         }
 
         return view('pandoapps::alternatives.edit', compact('alternative'));
@@ -64,24 +66,25 @@ class AlternativeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  int  $parenId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($parentId, $id)
     {
         $alternative = Alternative::find($id);
 
         if(empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
-            return redirect(route('alternatives.index', request()->parent_id));
+            return redirect(route('alternatives.index', $parentId));
         }
         
         $question = $alternative->question;
         if($question->alternatives()->count() == 1) {
             flash('Questões fechadas devem ter no mínimo 1 alternativa!')->error();
 
-            return redirect(route('alternatives.index', request()->parent_id));
+            return redirect(route('alternatives.index', $parentId));
         }
 
         $id = $alternative->id;
@@ -93,6 +96,6 @@ class AlternativeController extends Controller
 
         flash('Alternativa deletada com sucesso!')->success();
 
-        return redirect(route('alternatives.index', request()->parent_id));
+        return redirect(route('alternatives.index', $parentId));
     }
 }
