@@ -26,17 +26,18 @@ class QuestionController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  int  $parentId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($parentId, $id)
     {
         $question = Question::find($id);
 
         if(empty($question)) {
             flash('Questão não encontrada!')->error();
 
-            return redirect(route('questions.index', request()->parent_id));
+            return redirect(route('questions.index', $parentId));
         }
 
         return view('pandoapps::questions.show', compact('question'));
@@ -45,17 +46,18 @@ class QuestionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  int  $parentId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($parentId, $id)
     {
         $question = Question::find($id);
 
         if(empty($question)) {
             flash('Questão não encontrada!')->error();
 
-            return redirect(route('questions.index', request()->parent_id));
+            return redirect(route('questions.index', $parentId));
         }
 
         $id = $question->id;
@@ -66,6 +68,6 @@ class QuestionController extends Controller
         } 
         flash('Questão deletada com sucesso!')->success();
 
-        return redirect(route('questions.index', request()->parent_id));
+        return redirect(route('questions.index', $parentId));
     }
 }

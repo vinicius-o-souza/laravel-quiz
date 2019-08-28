@@ -110,17 +110,18 @@ class QuestionnaireController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  int  $parentId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($parentId, $id)
     {
         $questionnaire = Questionnaire::find($id);
 
         if(empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('questionnaires.index', request()->parent_id));
+            return redirect(route('questionnaires.index', $parentId));
         }
 
         return view('pandoapps::questionnaires.show', compact('questionnaire'));
@@ -129,17 +130,18 @@ class QuestionnaireController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
+     * @param  int  $parentId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($parentId, $id)
     {
         $questionnaire = Questionnaire::with('questions')->with('questions.alternatives')->find($id);
 
         if(empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('questionnaires.index', request()->parent_id));
+            return redirect(route('questionnaires.index', $parentId));
         }
 
         return view('pandoapps::questionnaires.edit', compact('questionnaire'));
@@ -148,18 +150,19 @@ class QuestionnaireController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $parentId
      * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update($parentId, $id, Request $request)
     {
         $questionnaire = Questionnaire::find($id);
 
         if(empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('questionnaires.index', request()->parent_id));
+            return redirect(route('questionnaires.index', $parentId));
         }
 
         $input = $request->all();
@@ -225,38 +228,37 @@ class QuestionnaireController extends Controller
                 } else {
                     flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
                     DB::rollback();
-                    return redirect(route('questionnaires.create', request()->parent_id));
+                    return redirect(route('questionnaires.create', $parentId));
                 }   
             }    
         }
 
         flash('Questionário atualizado com sucesso!')->success();
 
-        return redirect(route('questionnaires.index', request()->parent_id));
+        return redirect(route('questionnaires.index', $parentId));
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param  int  $parentId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($parentId, $id)
     {
         $questionnaire = Questionnaire::find($id);
 
         if(empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('questionnaires.index', request()->parent_id));
+            return redirect(route('questionnaires.index', $parentId));
         }
-        
-        dd(request()->parent_id);
 
         $questionnaire->delete();
 
         flash('Questionário deletado com sucesso!')->success();
 
-        return redirect(route('questionnaires.index', request()->parent_id));
+        return redirect(route('questionnaires.index', $parentId));
     }
 }
