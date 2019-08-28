@@ -27,11 +27,12 @@ class ExecutableController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param int $parentId
      * @param int $idQuestionnaire
      * @param int $modelId
      * @return \Illuminate\Http\Response
      */
-    public function create($idQuestionnaire, $modelId)
+    public function create($parentId, $idQuestionnaire, $modelId)
     {   
         $questionnaire = Questionnaire::with(['questions' => function($query) {
                                             $query->where('is_active', 1);            
@@ -40,7 +41,7 @@ class ExecutableController extends Controller
         if(empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('executables.index', ['parent_id' => request()->parent_id, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
         if($questionnaire->answer_once) {
@@ -48,7 +49,7 @@ class ExecutableController extends Controller
             if($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
 
-                return redirect(route('questionnaires.index', request()->parent_id));
+                return redirect(route('questionnaires.index', $parentId));
             }
         }
 
@@ -61,14 +62,14 @@ class ExecutableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store($id, $modelId, Request $request)
+    public function store(Request $request)
     {
         $input = $request->except('_token');
         
         $executable = Executable::create([
-            'executable_id'         => $modelId,
+            'executable_id'         => $request->model_id,
             'executable_type'       => config('quiz.models.executable'),
-            'questionnaire_id'      => $id,
+            'questionnaire_id'      => $request->questionnaire_id,
             'score'                 => 0
         ]);
         
@@ -116,7 +117,7 @@ class ExecutableController extends Controller
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('questionnaires.index', request()->parent_id));
+        return redirect(route('questionnaires.index', $request->parent_id));
     }
 
     /**
