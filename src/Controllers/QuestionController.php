@@ -22,53 +22,6 @@ class QuestionController extends Controller
     {
         return $questionDataTable->render('pandoapps::questions.index');
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $questionsType = QuestionType::orderBy('name','asc')->pluck('name','id')->toArray();
-
-        return view('pandoapps::questions.create', compact('questionsType'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $input = $request->all();
-
-        $questionValidation = Validator::make($input, Question::$rules);
-        if ($questionValidation->fails()) {
-            $errors = $questionValidation->errors();
-            $msg = '';
-            foreach($errors->all() as $message) {
-                $msg .= $message . '<br>';
-            }
-            flash($msg)->error();
-            return redirect()->back()->withInput();
-        }
-
-        Question::create([
-            'title'            => $input['title'],
-            'description'      => $input['description'],
-            'hint'             => isset($input['hint']) ? $input['hint'] : '',
-            'is_required'      => isset($input['is_required']) ? true : '',
-            'questionnaire_id' => request()->questionnaire_id,
-            'question_type_id' => $input['question_type_id'],
-        ]);
-
-        flash('Questão criada com sucesso!')->success();
-
-        return redirect(route('questions.index', request()->parent_id));
-    }
     
     /**
      * Display the specified resource.
@@ -87,64 +40,6 @@ class QuestionController extends Controller
         }
 
         return view('pandoapps::questions.show', compact('question'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $question = Question::find($id);
-
-        $questionsType = QuestionType::orderBy('name','asc')->pluck('name','id')->toArray();
-
-        if(empty($question)) {
-            flash('Questão não encontrada!')->error();
-
-            return redirect(route('questions.index', request()->parent_id));
-        }
-
-        return view('pandoapps::questions.edit', compact('question', 'questionsType'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update($id, Request $request)
-    {
-        $question = Question::find($id);
-
-        if(empty($question)) {
-            flash('Questão não encontrada!')->error();
-
-            return redirect(route('questions.index', request()->parent_id));
-        }
-
-        $input = $request->all();
-
-        $questionValidation = Validator::make($input, Question::$rules);
-        if ($questionValidation->fails()) {
-            $errors = $questionValidation->errors();
-            $msg = '';
-            foreach($errors->all() as $message) {
-                $msg .= $message . '<br>';
-            }
-            flash($msg)->error();
-            return redirect()->back()->withInput();
-        }
-
-        $question->update($input);
-
-        flash('Questão atualizada com sucesso!')->success();
-
-        return redirect(route('questions.index', request()->parent_id));
     }
 
     /**

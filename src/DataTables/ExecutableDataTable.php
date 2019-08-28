@@ -38,6 +38,14 @@ class ExecutableDataTable extends DataTable
         return Datatables::of($executables)
             ->editColumn('questionnaire_id', function(Executable $executable) {
                 return $executable->questionnaire->name;
+            })
+            ->editColumn('executable_id', function(Executable $executable) {
+                $type = $executable->executable_type;
+                $columnName = config('quiz.models.executable_column_name');
+                if ($columnName) {
+                   return $executable->executable->$columnName; 
+                }
+                return $executable->id;
             });
     }
 

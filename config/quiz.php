@@ -8,6 +8,11 @@ return [
         *   Tipo do Modelo que responderá o questionário
         */
         'executable' => App\User::class,
+        
+        /*
+        *   Nome da coluna que representa a descrição do modelo que executa o questionário
+        */
+        'executable_column_name' => 'name',
 
         /*
         *   Tipo do Modelo que pertence o questionário

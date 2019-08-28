@@ -45,5 +45,13 @@ class Executable extends Model
     {
         return $this->belongsTo(Questionnaire::class);
     }
+    
+    /**
+     * Get the owning executable model.
+     */
+    public function executable()
+    {
+        return $this->morphTo();
+    }
 
 }

@@ -6,11 +6,11 @@ Route::group(['prefix' => 'parent/{parent_id}'], function () {
     
     Route::resource('questionnaires', 'QuestionnaireController'); 
 
-    Route::resource('questions', 'QuestionController');
+    Route::resource('questions', 'QuestionController')->except(['create', 'store', 'update']);
 
-    Route::resource('alternatives', 'AlternativeController');
+    Route::resource('alternatives', 'AlternativeController')->except(['create', 'store', 'update']);;
 
-    Route::resource('answers', 'AnswerController');
+    Route::resource('answers', 'AnswerController')->except(['create', 'store', 'update']);;
 
     Route::group(['prefix' => 'executables'], function () {
         

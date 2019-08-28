@@ -18,17 +18,26 @@ class AnswerDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parent_id = request()->parent_id;
+        $parentId = request()->parent_id;
         $question_id = request()->question_id;
-        $answers = Answer::where('question_id', $question_id)->with('questions.alternatives')->get();
+        
+        $answers = Answer::whereHas('question.questionnaire', function (Builder $query) use ($parentId) {
+            $query->where('parent_id', $parentId);
+        })->with('alternative');
+        if($question_id) {
+            $answers->where('question_id', $question_id);
+        }
+        $answers->get();
 
         return Datatables::of($answers)
             ->addColumn('action' , 'pandoapps::answers.datatables_actions')
             ->addColumn('question', function(Answer $answer) {
-                return $answer->question->title;
+                return $answer->question->description;
             })
             ->addColumn('alternative', function(Answer $answer) {
-                return $answer->alternative->title;
+                if($answer->alternative)
+                    return $answer->alternative->description;
+                return 'Questão aberta';
             })
             ->rawColumns(['action']);
     }
@@ -56,10 +65,9 @@ class AnswerDataTable extends DataTable
     {
         return [
             'question'      => ['title' => 'Questão'],
-            'description'   => ['title' => 'Descrição'],
             'alternative'   => ['title' => 'Alternativa'],
+            'description'   => ['title' => 'Resposta'],
             'score'         => ['title' => 'Pontuação'],
-            'alternativa'   => ['title' => 'Alternativa']
         ];
     }
 
