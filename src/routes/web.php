@@ -16,6 +16,8 @@ Route::group(['prefix' => 'parent/{parent_id}'], function () {
         
         Route::get('/', 'ExecutableController@index')->name('executables.index');
         
+        Route::get('{executable_id}/', 'ExecutableController@show')->name('executables.show');
+        
         Route::get('{questionnaire_id}/create/{model_id}', 'ExecutableController@create')->name('executables.create');
         
         Route::post('{questionnaire_id}/store/{model_id}', 'ExecutableController@store')->name('executables.store');

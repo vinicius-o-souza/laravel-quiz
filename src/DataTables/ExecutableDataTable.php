@@ -36,6 +36,7 @@ class ExecutableDataTable extends DataTable
         
 
         return Datatables::of($executables)
+            ->addColumn('action' , 'pandoapps::executables.datatables_actions')
             ->editColumn('questionnaire_id', function(Executable $executable) {
                 return $executable->questionnaire->name;
             })
@@ -46,6 +47,9 @@ class ExecutableDataTable extends DataTable
                    return $executable->executable->$columnName; 
                 }
                 return $executable->id;
+            })
+            ->editColumn('created_at', function(Executable $executable) {
+                return $executable->created_at->format('d/m/Y');
             });
     }
 
@@ -59,6 +63,7 @@ class ExecutableDataTable extends DataTable
         return $this->builder()
             ->minifiedAjax()
             ->columns($this->getColumns())
+            ->addAction(['width' => '75px', 'printable' => false, 'title' => 'Opções'])
             ->parameters(DataTablesDefaults::getParameters());
     }
 
@@ -74,12 +79,14 @@ class ExecutableDataTable extends DataTable
             return [
                 'questionnaire_id'  => ['title' => 'Questionário'],
                 'score'             => ['title' => 'Nota'],
+                'created_at'        => ['title' => 'Data']
             ];
         } else {
             return [
                 'executable_id'     => ['title' => 'Respondeu'],
                 'questionnaire_id'  => ['title' => 'Questionário'],
                 'score'             => ['title' => 'Nota'],
+                'created_at'        => ['title' => 'Data']
             ];
         }
     }

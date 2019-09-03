@@ -47,6 +47,14 @@ class Executable extends Model
     }
     
     /**
+     * Get the answers for the executable.
+     */
+    public function answers()
+    {
+        return $this->hasMany(Answer::class);
+    }
+    
+    /**
      * Get the owning executable model.
      */
     public function executable()

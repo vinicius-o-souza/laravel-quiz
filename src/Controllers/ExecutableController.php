@@ -117,7 +117,7 @@ class ExecutableController extends Controller
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('questionnaires.index', $request->parent_id));
+        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
     }
 
     /**
@@ -126,8 +126,19 @@ class ExecutableController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($parentId, $executableId)
     {
-        //
+        $executable = Executable::with('answers.question')->find($executableId);
+        
+        if(empty($executable)) {
+            flash('Execução do questionário não encontrada!')->error();
+
+            if(request()->model_id) {
+                return redirect(route('executables.show', ['parent_id' => $parentId, 'model_id' => request()->model_id]));    
+            }
+            return redirect(route('executables.index', $parentId));
+        }
+        
+        return view('pandoapps::executables.show', compact('executable'));
     }
 }

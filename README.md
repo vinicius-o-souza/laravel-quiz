@@ -6,8 +6,22 @@ Library for adding questionnaires into Laravel framework
 2. Adicionar QuestionTypeSeeder no DatabaseSeeder;
 
 3. Fazer relacionamento com a classe que realizar questionários;
+/**
+* @return \Illuminate\Database\Eloquent\Relations\HasMany
+**/
+public function executionTests()
+{
+	return $this->morphToMany(\PandoApps\Quiz\Models\Questionnaire::class, 'executable')->withPivot('score');
+}
 
 4. Fazer relacionamento com a classe que cria questionários;
+/**
+* @return \Illuminate\Database\Eloquent\Relations\HasMany
+**/
+public function questionnaires()
+{
+	return $this->morphMany(\PandoApps\Quiz\Models\Questionnaire::class, 'parent');
+}
 
 Não é possível realizar o cadastro de novas questões e/ou alternativas pelas rotas de store e create, a criação das mesmas só é dado pela rota de edição do questionário.
 
