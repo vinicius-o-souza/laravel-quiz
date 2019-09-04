@@ -44,13 +44,30 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
+        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->latest()->get();
+        
+        if(isset($questionnaire->type_waiting_time)) {
+            $lastExecution = $executionsModel->first()->created_at;
+            $createAtPlusWaitingTime = $this->handlePlusTime($lastExecution->created_at, $lastExecution->type_waiting_time, $lastExecution->waiting_time);
+            if($createAtPlusWaitingTime > now()) {
+                flash('Você não pode responder o questionário novamente. Volte novamente dia: '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
+
+                return redirect(route('questionnaires.index', $parentId));
+            }
+        }
+        
         if($questionnaire->answer_once) {
-            $executionModelCount = $questionnaire->executables()->where('executable_id', $modelId)->count();
+            $executionModelCount = $executionsModel->count();
             if($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
 
                 return redirect(route('questionnaires.index', $parentId));
             }
+        }
+        
+        if($questionnaire->execution_time) {
+            $executionTime = $this->handlePlusTime(now(), $questionanire->type_execution_time, $questionnaire->execution_time);
+            return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
         }
 
         return view('pandoapps::executables.create', compact('questionnaire', 'modelId'));
@@ -140,5 +157,25 @@ class ExecutableController extends Controller
         }
         
         return view('pandoapps::executables.show', compact('executable'));
+    }
+    
+    /**
+     * Return created_at of alert plus the waiting time of subject
+     *
+     * @return Carbon
+     */
+    private function handlePlusTime($created_at, $type_time, $time) {
+        switch($type_time) {
+            case config('quiz.type_time.MINUTES.id'):
+                return $created_at->copy()->addMinutes($time);
+            case config('quiz.type_time.HOURS.id'):
+                return $created_at->copy()->addHours($time);
+            case config('quiz.type_time.DAYS.id'):
+                return $created_at->copy()->addDays($time);
+            case config('quiz.type_time.MONTHS.id'):
+                return $created_at->copy()->addMonths($time);
+            case config('quiz.type_time.YEARS.id'):
+                return $created_at->copy()->addYears($time);
+        }
     }
 }

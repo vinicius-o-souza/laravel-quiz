@@ -59,10 +59,14 @@ class QuestionnaireController extends Controller
         DB::beginTransaction();
 
         $questionnaire = Questionnaire::create([
-            'name'        => $input['name'],
-            'answer_once' => isset($input['answer_once']) ? true : false,
-            'parent_id'   => $request->parent_id,
-            'parent_type' => config('quiz.models.parent_type')
+            'name'                  => $input['name'],
+            'answer_once'           => isset($input['answer_once']) ? true : false,
+            'parent_id'             => $request->parent_id,
+            'parent_type'           => config('quiz.models.parent_type'),
+            'waiting_time'          => isset($input['waiting_time']) ? $input['waiting_time'] : null,
+            'type_waiting_time'     => isset($input['type_waiting_time']) ? $input['type_waiting_time'] : null,
+            'execution_time'        => isset($input['execution_time']) ? $input['execution_time'] : null,
+            'type_execution_time'   => isset($input['type_execution_time']) ? $input['type_execution_time'] : null
         ]);
         
         if($input['countQuestion'] > 0) {

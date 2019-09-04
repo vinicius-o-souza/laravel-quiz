@@ -24,7 +24,11 @@ class Questionnaire extends Model
         'name',
         'answer_once',
         'parent_id',
-        'parent_type'
+        'parent_type',
+        'waiting_time',
+        'type_waiting_time',
+        'execution_time',
+        'type_execution_time'
     ];
 
     /**
@@ -33,9 +37,13 @@ class Questionnaire extends Model
      * @var array
      */
     protected $casts = [
-        'id'          => 'integer',
-        'name'        => 'string',
-        'answer_once' => 'boolean'
+        'id'                    => 'integer',
+        'name'                  => 'string',
+        'answer_once'           => 'boolean',
+        'waiting_time'          => 'integer',
+        'type_waiting_time'     => 'integer',
+        'execution_time'        => 'integer',
+        'type_execution_time'   => 'integer'
     ];
 
     /**
@@ -62,5 +70,26 @@ class Questionnaire extends Model
     public function executables()
     {
         return $this->morphedByMany(config('quiz.models.executable'), 'executable')->withPivot('score');
+    }
+    
+    /**
+     * Return type time
+     *
+     * @var int $typeTime
+     * @return string
+     */
+    public function handleTypeTime($typeTime){
+        switch ($typeTime) {
+            case config('quiz.type_time.MINUTES.id'):
+                return config('quiz.type_time.MINUTES.name');
+            case config('quiz.type_time.HOURS.id'):
+                return config('quiz.type_time.HOURS.name');
+            case config('quiz.type_time.DAYS.id'):
+                return config('quiz.type_time.DAYS.name');
+            case config('quiz.type_time.MONTHS.id'):
+                return config('quiz.type_time.MONTHS.name');
+            case config('quiz.type_time.YEARS.id'):
+                return config('quiz.type_time.YEARS.name');
+        }
     }
 }

@@ -10,6 +10,88 @@
     {!! Form::checkbox('answer_once', null, null) !!}
 </div>
 
+<!-- Waiting Time Checkbox -->
+<div class="form-group col-sm-12">
+    {!! Form::label('checkbox_waiting_time', 'Deseja definir um tempo de espera para submeter outra resposta?') !!}
+    {!! Form::checkbox('waiting_time', null, null) !!}
+</div>
+
+<div id="waiting_time_block">
+    <!-- Waiting Time Field -->
+    <div class="form-group col-sm-6">
+        {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
+        {!! Form::text('waiting_time', null, ['class' => 'form-control']) !!}
+    </div>
+    
+    <!-- Type Waiting Time Field -->
+    <div class="form-group col-sm-6">
+        {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
+        <select id="type_waiting_time" name="type_waiting_time" class="form-control select2">
+            <option value="{{ config('quiz.type_time.MINUTES.id') }}"
+                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.MINUTES.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.HOURS.id') }}"
+                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.HOURS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.HOURS.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.DAYS.id') }}"
+                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.DAYS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.DAYS.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.MONTHS.id') }}"
+                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.MONTHS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.MONTHS.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.YEARS.id') }}"
+                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.YEARS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.YEARS.name') }}
+            </option>
+        </select>
+    </div>
+</div>
+
+<!-- Execution Time Checkbox -->
+<div class="form-group col-sm-12">
+    {!! Form::label('checkbox_execution_time', 'Deseja definir um tempo máximo de execução do questionário?') !!}
+    {!! Form::checkbox('execution_time', null, null) !!}
+</div>
+
+<div id="execution_time_block">
+    <!-- Execution Time Field -->
+    <div class="form-group col-sm-6">
+        {!! Form::label('execution_time', 'Tempo de Espera:') !!}
+        {!! Form::text('execution_time', null, ['class' => 'form-control']) !!}
+    </div>
+    
+    <!-- Type execution Time Field -->
+    <div class="form-group col-sm-6">
+        {!! Form::label('execution_time', 'Tempo de Espera:') !!}
+        <select id="type_execution_time" name="type_execution_time" class="form-control select2">
+            <option value="{{ config('quiz.type_time.MINUTES.id') }}"
+                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.MINUTES.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.HOURS.id') }}"
+                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.HOURS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.HOURS.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.DAYS.id') }}"
+                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.DAYS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.DAYS.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.MONTHS.id') }}"
+                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.MONTHS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.MONTHS.name') }}
+            </option>
+            <option value="{{ config('quiz.type_time.YEARS.id') }}"
+                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.YEARS.id')) ? 'selected': ''}}>
+                    {{ config('quiz.type_time.YEARS.name') }}
+            </option>
+        </select>
+    </div>
+</div>
+
 <input type="hidden" name="countQuestion" id="countQuestion" value="0">
 
 <div class="col-sm-12">

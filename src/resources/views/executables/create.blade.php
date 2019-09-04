@@ -13,6 +13,7 @@
         <div class="clearfix"></div>
         <div class="box box-primary">
             <div class="box-body">
+                <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
                 {!! Form::open(['route' => ['executables.store', request()->parent_id, $questionnaire->id, request()->model_id], 'class' => 'w-100']) !!}
                     <div class="row p-md-5">
                         @foreach($questionnaire->questions as $key => $question)
@@ -52,5 +53,34 @@
         $('textarea[required]').on('invalid', function() {
             this.setCustomValidity('Campo de preenchimento obrigatório.');
         });
+        
+        // Set the date we're counting down to
+        @if(isset($executionTime))
+            var countDownDate = new Date('{!! $executionTime !!}').getTime();
+            
+            // Update the count down every 1 second
+            var x = setInterval(function() {
+            
+                // Get today's date and time
+                var now = new Date().getTime();
+                    
+                // Find the distance between now and the count down date
+                var distance = countDownDate - now;
+                    
+                // Time calculations for days, hours, minutes and seconds
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    
+                // Output the result in an element with id="timer"
+                document.getElementById("timer").innerHTML = hours + "h "
+                + minutes + "m " + seconds + "s ";
+                    
+                // If the count down is over, write some text 
+                if (distance < 0) {
+                    $('form').submit();
+                }
+            }, 1000);
+        @endif
     </script>
 @endpush

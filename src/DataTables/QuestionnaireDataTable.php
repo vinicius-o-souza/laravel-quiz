@@ -32,7 +32,17 @@ class QuestionnaireDataTable extends DataTable
             ->addColumn('questions', function(Questionnaire $questionnaire) {
                 return '<a href="'. route('questions.index', ['questionnaire_id' => $questionnaire->id]) .'"> Questões </a>';
             })
-            ->rawColumns(['action', 'is_active', 'answer_once', 'questions']);
+            ->addColumn('execution_time', function (Questionnaire $questionnaire) {
+                if($questionnaire->execution_time) 
+                    return $questionnaire->execution_time .' ' . $questionnaire->handleTypeTime($questionnaire->execution_time);
+                return 'Ilimitado';
+            })
+            ->addColumn('waiting_time', function (Questionnaire $questionnaire) {
+                if($questionnaire->waiting_time) 
+                    return $questionnaire->waiting_time .' ' . $questionnaire->handleTypeTime($questionnaire->waiting_time);
+                return 'Sem espera';
+            })
+            ->rawColumns(['action', 'is_active', 'answer_once', 'questions', 'execution_time', 'waiting_time']);
     }
 
     /**
@@ -57,10 +67,12 @@ class QuestionnaireDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'name'          => ['title' => 'Nome'],
-            'answer_once'   => ['title' => 'Resposta Única'],
-            'is_active'     => ['title' => 'Ativo'],
-            'questions'     => ['title' => 'Questões']
+            'name'              => ['title' => 'Nome'],
+            'answer_once'       => ['title' => 'Resposta Única'],
+            'is_active'         => ['title' => 'Ativo'],
+            'questions'         => ['title' => 'Questões'],
+            'execution_time'    => ['title' => 'Tempo total para execução do questionário'],
+            'waiting_time'      => ['title' => 'Tempo de espera para a próxima execução']
         ];
     }
 
