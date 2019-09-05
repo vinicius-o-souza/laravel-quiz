@@ -1,6 +1,6 @@
 {
     "name": "pandoapps/quiz",
-    "description": ":description",
+    "description": "Library for adding questionnaires into Laravel framework",
     "license": "MIT",
     "authors": [
         {
