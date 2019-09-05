@@ -46,8 +46,8 @@ class ExecutableController extends Controller
         
         $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->latest()->get();
         
-        if (!empty($executionsModel) && isset($questionnaire->type_waiting_time)) {
-            $lastExecution = $executionsModel->first()->created_at;
+        if (!$executionsModel->isEmpty() && isset($questionnaire->type_waiting_time)) {
+            $lastExecution = $executionsModel->first();
             $createAtPlusWaitingTime = $this->handlePlusTime($lastExecution->created_at, $lastExecution->type_waiting_time, $lastExecution->waiting_time);
             if ($createAtPlusWaitingTime > now()) {
                 flash('Você não pode responder o questionário novamente. Volte novamente dia: '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
@@ -66,7 +66,7 @@ class ExecutableController extends Controller
         }
         
         if ($questionnaire->execution_time) {
-            $executionTime = $this->handlePlusTime(now(), $questionanire->type_execution_time, $questionnaire->execution_time);
+            $executionTime = $this->handlePlusTime(now(), $questionnaire->type_execution_time, $questionnaire->execution_time);
             return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
         }
 
