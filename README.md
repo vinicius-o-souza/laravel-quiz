@@ -11,7 +11,7 @@ Library for adding questionnaires into Laravel framework
 **/
 public function executionTests()
 {
-	return $this->morphToMany(\PandoApps\Quiz\Models\Questionnaire::class, 'executable')->withPivot('score');
+	return $this->morphToMany(\PandoApps\Quiz\Models\Questionnaire::class, 'executable')->withPivot('score')->withTimestamps();
 }
 
 4. Fazer relacionamento com a classe que cria questionários;

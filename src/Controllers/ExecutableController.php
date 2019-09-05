@@ -44,13 +44,13 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
-        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->latest()->get();
+        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         
         if (!$executionsModel->isEmpty() && isset($questionnaire->type_waiting_time)) {
             $lastExecution = $executionsModel->first();
-            $createAtPlusWaitingTime = $this->handlePlusTime($lastExecution->created_at, $lastExecution->type_waiting_time, $lastExecution->waiting_time);
+            $createAtPlusWaitingTime = $this->handlePlusTime($lastExecution->pivot->created_at, $questionnaire->type_waiting_time, $questionnaire->waiting_time);
             if ($createAtPlusWaitingTime > now()) {
-                flash('Você não pode responder o questionário novamente. Volte novamente dia: '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
+                flash('Você não pode responder o questionário novamente. Volte novamente dia '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
 
                 return redirect(route('questionnaires.index', $parentId));
             }

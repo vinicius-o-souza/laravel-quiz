@@ -69,7 +69,7 @@ class Questionnaire extends Model
      */
     public function executables()
     {
-        return $this->morphedByMany(config('quiz.models.executable'), 'executable')->withPivot('score');
+        return $this->morphedByMany(config('quiz.models.executable'), 'executable')->withPivot('score')->withTimestamps();
     }
     
     /**
