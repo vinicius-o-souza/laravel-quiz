@@ -5,7 +5,6 @@ namespace PandoApps\Quiz\DataTables;
 use PandoApps\Quiz\Models\Questionnaire;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
 class QuestionnaireDataTable extends DataTable
@@ -23,23 +22,25 @@ class QuestionnaireDataTable extends DataTable
 
         return Datatables::of($questionnaires)
             ->addColumn('action', 'pandoapps::questionnaires.datatables_actions')
-            ->editColumn('is_active', function(Questionnaire $questionnaire) {
+            ->editColumn('is_active', function (Questionnaire $questionnaire) {
                 return $questionnaire->is_active ? 'Sim' : 'Não';
             })
-            ->editColumn('answer_once', function(Questionnaire $questionnaire) {
+            ->editColumn('answer_once', function (Questionnaire $questionnaire) {
                 return $questionnaire->answer_once ? 'Sim' : 'Não';
             })
-            ->addColumn('questions', function(Questionnaire $questionnaire) {
+            ->addColumn('questions', function (Questionnaire $questionnaire) {
                 return '<a href="'. route('questions.index', ['questionnaire_id' => $questionnaire->id]) .'"> Questões </a>';
             })
             ->addColumn('execution_time', function (Questionnaire $questionnaire) {
-                if($questionnaire->execution_time) 
-                    return $questionnaire->execution_time .' ' . $questionnaire->handleTypeTime($questionnaire->execution_time);
+                if ($questionnaire->execution_time) {
+                    return $questionnaire->execution_time .' ' . $questionnaire->handleTypeTime($questionnaire->type_execution_time);
+                }
                 return 'Ilimitado';
             })
             ->addColumn('waiting_time', function (Questionnaire $questionnaire) {
-                if($questionnaire->waiting_time) 
-                    return $questionnaire->waiting_time .' ' . $questionnaire->handleTypeTime($questionnaire->waiting_time);
+                if ($questionnaire->waiting_time) {
+                    return $questionnaire->waiting_time .' ' . $questionnaire->handleTypeTime($questionnaire->type_waiting_time);
+                }
                 return 'Sem espera';
             })
             ->rawColumns(['action', 'is_active', 'answer_once', 'questions', 'execution_time', 'waiting_time']);

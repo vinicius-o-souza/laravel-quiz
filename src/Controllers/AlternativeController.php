@@ -2,12 +2,10 @@
 
 namespace PandoApps\Quiz\Controllers;
 
-use PandoApps\Quiz\Models\Alternative;
-use PandoApps\Quiz\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Validator;
 use PandoApps\Quiz\DataTables\AlternativeDataTable;
+use PandoApps\Quiz\Models\Alternative;
 
 class AlternativeController extends Controller
 {
@@ -34,7 +32,7 @@ class AlternativeController extends Controller
     {
         $alternative = Alternative::find($id);
 
-        if(empty($alternative)) {
+        if (empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
             return redirect(route('alternatives.index', $parentId));
@@ -54,7 +52,7 @@ class AlternativeController extends Controller
     {
         $alternative = Alternative::find($id);
 
-        if(empty($alternative)) {
+        if (empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
             return redirect(route('alternatives.index', $parentId));
@@ -74,23 +72,22 @@ class AlternativeController extends Controller
     {
         $alternative = Alternative::find($id);
 
-        if(empty($alternative)) {
+        if (empty($alternative)) {
             flash('Alternativa não encontrada!')->error();
 
             return redirect(route('alternatives.index', $parentId));
         }
         
         $question = $alternative->question;
-        if($question->alternatives()->count() == 1) {
+        if ($question->alternatives()->count() == 1) {
             flash('Questões fechadas devem ter no mínimo 1 alternativa!')->error();
 
             return redirect(route('alternatives.index', $parentId));
         }
 
-        $id = $alternative->id;
         $alternative->delete();
         
-        if(request()->ajax()) {
+        if (request()->ajax()) {
             return response()->json(['status' => 'Alternativa deletada']);
         }
 

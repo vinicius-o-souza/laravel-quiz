@@ -13,10 +13,10 @@
 <!-- Waiting Time Checkbox -->
 <div class="form-group col-sm-12">
     {!! Form::label('checkbox_waiting_time', 'Deseja definir um tempo de espera para submeter outra resposta?') !!}
-    {!! Form::checkbox('waiting_time', null, null) !!}
+    {!! Form::checkbox('checkbox_waiting_time', null, null, ['id' => 'checkbox_waiting_time']) !!}
 </div>
 
-<div id="waiting_time_block">
+<div class="row col-sm-12" id="waiting_time_block">
     <!-- Waiting Time Field -->
     <div class="form-group col-sm-6">
         {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
@@ -54,10 +54,10 @@
 <!-- Execution Time Checkbox -->
 <div class="form-group col-sm-12">
     {!! Form::label('checkbox_execution_time', 'Deseja definir um tempo máximo de execução do questionário?') !!}
-    {!! Form::checkbox('execution_time', null, null) !!}
+    {!! Form::checkbox('checkbox_execution_time', null, null, ['id' => 'checkbox_execution_time']) !!}
 </div>
 
-<div id="execution_time_block">
+<div class="row col-sm-12" id="execution_time_block">
     <!-- Execution Time Field -->
     <div class="form-group col-sm-6">
         {!! Form::label('execution_time', 'Tempo de Espera:') !!}
@@ -240,14 +240,56 @@
     const questionsType = {!! json_encode(config('quiz.question_types')) !!};
     
     var questionnaire = [];
-    @if(Request::is('questionnaires/*/edit'))
+    @if(Request::is('parent/*/questionnaires/*/edit'))
         var questionnaireEdit = {!! json_encode($questionnaire) !!};
     @endif
     
     
     $(document).ready(function() {
         
-        @if(Request::is('questionnaires/*/edit'))
+        $(document).on('change', '#answer_once', function () {
+            if($('#answer_once').prop('checked')) {
+                $('#checkbox_waiting_time_block').hide();
+                $('#checkbox_waiting_time').prop('checked', false);
+                $('#waiting_time_block').hide();
+                $('#waiting_time_block input').attr('disabled', true);
+                $('#waiting_time_block select').attr('disabled', true);
+            } else {
+                $('#checkbox_waiting_time_block').show();
+            }
+        });
+        
+        $('#waiting_time_block').hide();
+        $('#waiting_time_block input').attr('disabled', true);
+        $('#waiting_time_block select').attr('disabled', true);
+        $(document).on('change', '#checkbox_waiting_time', function () {
+            if($('#checkbox_waiting_time').prop('checked')) {
+                $('#waiting_time_block').show();
+                $('#waiting_time_block input').attr('disabled', false);
+                $('#waiting_time_block select').attr('disabled', false);
+            } else {
+                $('#waiting_time_block').hide();
+                $('#waiting_time_block input').attr('disabled', true);
+                $('#waiting_time_block select').attr('disabled', true);
+            }
+        });
+        
+        $('#execution_time_block').hide();
+        $('#execution_time_block input').attr('disabled', true);
+        $('#execution_time_block select').attr('disabled', true);
+        $(document).on('change', '#checkbox_execution_time', function () {
+            if($('#checkbox_execution_time').prop('checked')) {
+                $('#execution_time_block').show();
+                $('#execution_time_block input').attr('disabled', false);
+                $('#execution_time_block select').attr('disabled', false);
+            } else {
+                $('#execution_time_block').hide();
+                $('#execution_time_block input').attr('disabled', true);
+                $('#execution_time_block select').attr('disabled', true);
+            }
+        });
+        
+        @if(Request::is('parent/*/questionnaires/*/edit'))
             handleQuestionnaireEdit();
         @endif
 

@@ -33,12 +33,12 @@ class ExecutableController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create($parentId, $idQuestionnaire, $modelId)
-    {   
-        $questionnaire = Questionnaire::with(['questions' => function($query) {
-                                            $query->where('is_active', 1);            
-                                        }, 'questions.alternatives'])
+    {
+        $questionnaire = Questionnaire::with(['questions' => function ($query) {
+            $query->where('is_active', 1);
+        }, 'questions.alternatives'])
                                         ->find($idQuestionnaire);
-        if(empty($questionnaire)) {
+        if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
@@ -46,26 +46,26 @@ class ExecutableController extends Controller
         
         $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->latest()->get();
         
-        if(isset($questionnaire->type_waiting_time)) {
+        if (!empty($executionsModel) && isset($questionnaire->type_waiting_time)) {
             $lastExecution = $executionsModel->first()->created_at;
             $createAtPlusWaitingTime = $this->handlePlusTime($lastExecution->created_at, $lastExecution->type_waiting_time, $lastExecution->waiting_time);
-            if($createAtPlusWaitingTime > now()) {
+            if ($createAtPlusWaitingTime > now()) {
                 flash('Você não pode responder o questionário novamente. Volte novamente dia: '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
 
                 return redirect(route('questionnaires.index', $parentId));
             }
         }
         
-        if($questionnaire->answer_once) {
+        if ($questionnaire->answer_once) {
             $executionModelCount = $executionsModel->count();
-            if($executionModelCount > 1) {
+            if ($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
 
                 return redirect(route('questionnaires.index', $parentId));
             }
         }
         
-        if($questionnaire->execution_time) {
+        if ($questionnaire->execution_time) {
             $executionTime = $this->handlePlusTime(now(), $questionanire->type_execution_time, $questionnaire->execution_time);
             return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
         }
@@ -92,14 +92,13 @@ class ExecutableController extends Controller
         
         $sumWeight = 0;
         $sumValues = 0;
-        foreach($input as $idQuestion => $answer) {
+        foreach ($input as $idQuestion => $answer) {
             $question = Question::find($idQuestion);
             
-            if($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
-                
+            if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
                 $alternative = Alternative::find($answer);
                 
-                if($alternative->is_correct) {
+                if ($alternative->is_correct) {
                     $score = $question->weight * $alternative->value;
                     $sumValues += $question->weight * $alternative->value;
                     $sumWeight += $question->weight;
@@ -112,7 +111,7 @@ class ExecutableController extends Controller
                     'alternative_id'    => $answer,
                     'question_id'       => $idQuestion,
                     'score'             => $score,
-               ]);    
+               ]);
             } else {
                 $sumValues = null;
                 $sumWeight = null;
@@ -122,12 +121,11 @@ class ExecutableController extends Controller
                     'question_id'       => $idQuestion,
                     'description'       => $answer,
                     'score'             => null
-               ]);    
+               ]);
             }
-            
         }
         
-        if($sumValues && $sumWeight) {
+        if ($sumValues && $sumWeight) {
             $scoreTotal = $sumValues / $sumWeight;
             $executable->update(['score' => $scoreTotal]);
         }
@@ -140,18 +138,18 @@ class ExecutableController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $parentId
      * @return \Illuminate\Http\Response
      */
     public function show($parentId, $executableId)
     {
         $executable = Executable::with('answers.question')->find($executableId);
         
-        if(empty($executable)) {
+        if (empty($executable)) {
             flash('Execução do questionário não encontrada!')->error();
 
-            if(request()->model_id) {
-                return redirect(route('executables.show', ['parent_id' => $parentId, 'model_id' => request()->model_id]));    
+            if (request()->model_id) {
+                return redirect(route('executables.show', ['parent_id' => $parentId, 'model_id' => request()->model_id]));
             }
             return redirect(route('executables.index', $parentId));
         }
@@ -164,8 +162,9 @@ class ExecutableController extends Controller
      *
      * @return Carbon
      */
-    private function handlePlusTime($created_at, $type_time, $time) {
-        switch($type_time) {
+    private function handlePlusTime($created_at, $type_time, $time)
+    {
+        switch ($type_time) {
             case config('quiz.type_time.MINUTES.id'):
                 return $created_at->copy()->addMinutes($time);
             case config('quiz.type_time.HOURS.id'):

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Answer;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
 class AnswerDataTable extends DataTable
@@ -24,19 +23,20 @@ class AnswerDataTable extends DataTable
         $answers = Answer::whereHas('question.questionnaire', function (Builder $query) use ($parentId) {
             $query->where('parent_id', $parentId);
         })->with('alternative');
-        if($question_id) {
+        if ($question_id) {
             $answers->where('question_id', $question_id);
         }
         $answers->get();
 
         return Datatables::of($answers)
-            ->addColumn('action' , 'pandoapps::answers.datatables_actions')
-            ->addColumn('question', function(Answer $answer) {
+            ->addColumn('action', 'pandoapps::answers.datatables_actions')
+            ->addColumn('question', function (Answer $answer) {
                 return $answer->question->description;
             })
-            ->addColumn('alternative', function(Answer $answer) {
-                if($answer->alternative)
+            ->addColumn('alternative', function (Answer $answer) {
+                if ($answer->alternative) {
                     return $answer->alternative->description;
+                }
                 return 'Questão aberta';
             })
             ->rawColumns(['action']);

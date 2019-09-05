@@ -75,10 +75,11 @@ class Questionnaire extends Model
     /**
      * Return type time
      *
-     * @var int $typeTime
+     * @var int
      * @return string
      */
-    public function handleTypeTime($typeTime){
+    public function handleTypeTime($typeTime)
+    {
         switch ($typeTime) {
             case config('quiz.type_time.MINUTES.id'):
                 return config('quiz.type_time.MINUTES.name');

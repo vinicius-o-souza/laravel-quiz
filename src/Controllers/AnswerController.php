@@ -2,12 +2,9 @@
 
 namespace PandoApps\Quiz\Controllers;
 
-use PandoApps\Quiz\Models\Alternative;
-use PandoApps\Quiz\Models\Answer;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Validator;
 use PandoApps\Quiz\DataTables\AnswerDataTable;
+use PandoApps\Quiz\Models\Answer;
 
 class AnswerController extends Controller
 {
@@ -34,7 +31,7 @@ class AnswerController extends Controller
     {
         $answer = Answer::find($id);
 
-        if(empty($answer)) {
+        if (empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
             return redirect(route('answers.index', $parentId));
@@ -54,7 +51,7 @@ class AnswerController extends Controller
     {
         $answer = Answer::find($id);
 
-        if(empty($answer)) {
+        if (empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
             return redirect(route('answers.index', $parentId));
@@ -74,13 +71,12 @@ class AnswerController extends Controller
     {
         $answer = Answer::find($id);
 
-        if(empty($answer)) {
+        if (empty($answer)) {
             flash('Resposta não encontrada!')->error();
 
             return redirect(route('answers.index', $parentId));
         }
 
-        $id = $answer->id;
         $answer->delete();
 
         flash('Resposta deletada com sucesso!')->success();

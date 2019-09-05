@@ -42,7 +42,7 @@ class DataTablesDefaults
             ]
         ];
 
-        foreach($params as $key => $value) {
+        foreach ($params as $key => $value) {
             $defaults[$key] = $value;
         }
 
