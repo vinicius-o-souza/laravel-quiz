@@ -18,13 +18,14 @@ class ExecutionTimeService
      * @var $executionsModel
      * @return boolean
      */
-    public function canExecutionAgain(Questionnaire $questionnaire, $modelId, $executionsModel) 
+    public function canExecutionAgain(Questionnaire $questionnaire, $modelId) 
     {   
+        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         if (!$executionsModel->isEmpty() && isset($questionnaire->type_waiting_time)) {
             $lastExecution = $executionsModel->first();
             $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $questionnaire->waiting_time, $questionnaire->type_waiting_time);
             if ($createAtPlusWaitingTime > now()) {
-                flash('Você não pode responder o questionário novamente. Volte novamente dia '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
+                flash('Você não pode responder o questionário novamente. Volte novamente novamente daqui '. $createAtPlusWaitingTime->diffForHumans() .'!')->error();
 
                 return false;
             }
@@ -56,6 +57,9 @@ class ExecutionTimeService
     {
         $ttl = $this->ttl($questionnaire->execution_time, $questionnaire->type_execution_time);
         $redisKey = 'timer:'. $questionnaire->id .':' . $modelId;
+        if(Redis::get($redisKey)) {
+            return Redis::get($redisKey);
+        }
         $redisValue = Helpers::timePlusTypeTime(Carbon::now(), $questionnaire->execution_time, $questionnaire->type_execution_time);
         Redis::setEx($redisKey, $ttl, $redisValue);
         return Redis::get($redisKey);

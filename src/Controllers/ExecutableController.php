@@ -46,13 +46,12 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
-        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
-        
-        if (!$executionTimeService->canExecutionAgain($questionnaire, $modelId, $executionsModel)) {
+        if (!$executionTimeService->canExecutionAgain($questionnaire, $modelId)) {
             return redirect()->back();
         }
         
         if ($questionnaire->answer_once) {
+            $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
             $executionModelCount = $executionsModel->count();
             if ($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
@@ -87,7 +86,7 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
         }
         
-        if(!$executionTimeService->canExecutionAgain()) {
+        if($questionnaire->canExecuteAgain($request->model_id)) {
             return redirect()->back();
         }
         

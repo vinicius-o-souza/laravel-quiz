@@ -1,6 +1,6 @@
 <?php
 
-namespace PandoApps\Quiz\Helpers\Helpers;
+namespace PandoApps\Quiz\Helpers;
 
 use Carbon\Carbon;
  
