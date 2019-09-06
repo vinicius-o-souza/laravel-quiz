@@ -109,12 +109,12 @@ class QuizServiceProvider extends ServiceProvider
         
         // Publishing the config.
         $this->publishes([
-            "BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/config/websockets.php" => config_path('websockets.php'),
+            __DIR__."/../../BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/config/websockets.php" => config_path('websockets.php'),
         ], 'config');
 
         // Publishing the migrations.
         $this->publishes([
-            "BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/database/migrations/create_websockets_statistics_entries_table.php.stub" => database_path('migrations'),
+            __DIR__."/../../BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/database/migrations/create_websockets_statistics_entries_table.php.stub" => database_path('migrations'),
         ], 'migrations');
     }
 }

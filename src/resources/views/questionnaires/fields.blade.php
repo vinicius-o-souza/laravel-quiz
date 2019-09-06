@@ -116,9 +116,9 @@
 </div>
 
 @push('scripts_quiz')
-<script src="{{ asset('vendor/pandoapps_quiz/js/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/pandoapps_quiz/js/ractive.js') }}"></script>
-<script src="{{ asset('vendor/pandoapps_quiz/js/jquery.ba-throttle-debounce.min.js') }}"></script>
+<script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}"></script>
+<script src="{{ asset('vendor/pandoapps/js/ractive.js') }}"></script>
+<script src="{{ asset('vendor/pandoapps/js/jquery.ba-throttle-debounce.min.js') }}"></script>
 
 <script id="question-template" type="text/ractive">
     <li class="list-group-item questions" id="question_@{{ id }}">

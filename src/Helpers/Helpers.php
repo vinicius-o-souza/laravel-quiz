@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace PandoApps\Quiz\Helpers\Helpers;
 
 use Carbon\Carbon;
  
@@ -11,35 +11,19 @@ class Helpers {
      *
      * @return Carbon
      */
-    public function handlePlusTime($time, $type_time, $timePlus)
+    public static function timePlusTypeTime($time, $timePlus, $type_time)
     {
         switch ($type_time) {
             case config('quiz.type_time.MINUTES.id'):
-                return $created_at->copy()->addMinutes($timePlus);
+                return $time->copy()->addMinutes($timePlus);
             case config('quiz.type_time.HOURS.id'):
-                return $created_at->copy()->addHours($timePlus);
+                return $time->copy()->addHours($timePlus);
             case config('quiz.type_time.DAYS.id'):
-                return $created_at->copy()->addDays($timePlus);
+                return $time->copy()->addDays($timePlus);
             case config('quiz.type_time.MONTHS.id'):
-                return $created_at->copy()->addMonths($timePlus);
+                return $time->copy()->addMonths($timePlus);
             case config('quiz.type_time.YEARS.id'):
-                return $created_at->copy()->addYears($timePlus);
-        }
-    }
-    
-    public function handleTypeTime($time, $type_time) 
-    {
-        switch ($type_time) {
-            case config('quiz.type_time.MINUTES.id'):
-                return Carbon::now()->addMinutes($timePlus);
-            case config('quiz.type_time.HOURS.id'):
-                return Carbon::now()->addHours($timePlus);
-            case config('quiz.type_time.DAYS.id'):
-                return Carbon::now()->addDays($timePlus);
-            case config('quiz.type_time.MONTHS.id'):
-                return Carbon::now()->addMonths($timePlus);
-            case config('quiz.type_time.YEARS.id'):
-                return Carbon::now()->addYears($timePlus);
+                return $time->copy()->addYears($timePlus);
         }
     }
 }

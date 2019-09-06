@@ -46,7 +46,9 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
-        if (!$executionTimeService->canExecutionAgain($questionnaire, $modelId)) {
+        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
+        
+        if (!$executionTimeService->canExecutionAgain($questionnaire, $modelId, $executionsModel)) {
             return redirect()->back();
         }
         
@@ -60,8 +62,7 @@ class ExecutableController extends Controller
         }
         
         if ($questionnaire->execution_time) {
-            $executionTime = Helpers::handlePlusTime(now(), $questionnaire->type_execution_time, $questionnaire->execution_time);
-            $executionTimeService->handleQuestionnaireExecutionTime();
+            $executionTime = $executionTimeService->startRedisCache($questionnaire, $modelId);
             return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
         }
 
@@ -74,9 +75,21 @@ class ExecutableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, ExecutionTimeService $executionTimeService)
     {
         $input = $request->except('_token');
+        
+        $questionnaire = Questionnaire::find($request->questionnaire_id);
+        
+        if (empty($questionnaire)) {
+            flash('Questionário não encontrado!')->error();
+
+            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
+        }
+        
+        if(!$executionTimeService->canExecutionAgain()) {
+            return redirect()->back();
+        }
         
         $executable = Executable::create([
             'executable_id'         => $request->model_id,
