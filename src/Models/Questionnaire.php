@@ -93,4 +93,37 @@ class Questionnaire extends Model
                 return config('quiz.type_time.YEARS.name');
         }
     }
+    
+    /**
+     * Return if a modelId can execute again the questionnaire
+     *
+     * @var $modelId
+     * @return boolean
+     */
+    public function canExecute($modelId){
+        $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
+        if (!$executionsModel->isEmpty() && isset($this->type_waiting_time)) {
+            $lastExecution = $executionsModel->first();
+            $createAtPlusWaitingTime = Helpers::handlePlusTime($lastExecution->pivot->created_at, $this->type_waiting_time, $this->waiting_time);
+            if ($createAtPlusWaitingTime > now()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Return the time to execute again the questionnaire
+     *
+     * @var $modelId
+     * @return string
+     */
+    public function timeToExecuteAgain($modelId){
+        if(!$this->canExecute($modelId)){
+            $lastExecution = $executionsModel->first();
+            $createAtPlusWaitingTime = Helpers::handlePlusTime($lastExecution->pivot->created_at, $this->type_waiting_time, $this->waiting_time);
+            return Carbon::parse($createAtPlusWaitingTime)->diffForHumans();
+        }
+        return "Nenhum";
+    }
 }
