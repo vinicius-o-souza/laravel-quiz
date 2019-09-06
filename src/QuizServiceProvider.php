@@ -103,7 +103,7 @@ class QuizServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function publishOtherPackages()
+    protected function publishesOtherPackages()
     {
         //! Laravel WebSockets Publishes
         
