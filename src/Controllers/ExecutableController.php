@@ -87,7 +87,7 @@ class ExecutableController extends Controller
         }
         
         if (!$questionnaire->canExecute($request->model_id)) {
-            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
+            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($request->model_id) .'!')->error();
             return redirect()->back();
         }
         
