@@ -33,7 +33,7 @@ class ExecutableController extends Controller
      * @param int $modelId
      * @return \Illuminate\Http\Response
      */
-    public function create($parentId, $idQuestionnaire, $modelId)
+    public function create($parentId, $idQuestionnaire, $modelId, ExecutionTimeService $executionTimeService)
     {
         $questionnaire = Questionnaire::with(['questions' => function ($query) {
             $query->where('is_active', 1);
@@ -45,19 +45,13 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
         }
         
-        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
-        
-        if (!$executionsModel->isEmpty() && isset($questionnaire->type_waiting_time)) {
-            $lastExecution = $executionsModel->first();
-            $createAtPlusWaitingTime = $this->handlePlusTime($lastExecution->pivot->created_at, $questionnaire->type_waiting_time, $questionnaire->waiting_time);
-            if ($createAtPlusWaitingTime > now()) {
-                flash('Você não pode responder o questionário novamente. Volte novamente dia '. $createAtPlusWaitingTime->format('d/m/Y') .'!')->error();
-
-                return redirect(route('questionnaires.index', $parentId));
-            }
+        if (!$questionnaire->canExecute($modelId)) {
+            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
+            return redirect()->back();
         }
         
         if ($questionnaire->answer_once) {
+            $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
             $executionModelCount = $executionsModel->count();
             if ($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
@@ -67,7 +61,7 @@ class ExecutableController extends Controller
         }
         
         if ($questionnaire->execution_time) {
-            $executionTime = $this->handlePlusTime(now(), $questionnaire->type_execution_time, $questionnaire->execution_time);
+            $executionTime = $executionTimeService->startRedisCache($questionnaire, $modelId);
             return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
         }
 
@@ -80,7 +74,7 @@ class ExecutableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, ExecutionTimeService $executionTimeService)
     {
         $input = $request->except('_token');
         
@@ -169,26 +163,5 @@ class ExecutableController extends Controller
         }
         
         return view('pandoapps::executables.show', compact('executable'));
-    }
-    
-    /**
-     * Return created_at of alert plus the waiting time of subject
-     *
-     * @return Carbon
-     */
-    private function handlePlusTime($created_at, $type_time, $time)
-    {
-        switch ($type_time) {
-            case config('quiz.type_time.MINUTES.id'):
-                return $created_at->copy()->addMinutes($time);
-            case config('quiz.type_time.HOURS.id'):
-                return $created_at->copy()->addHours($time);
-            case config('quiz.type_time.DAYS.id'):
-                return $created_at->copy()->addDays($time);
-            case config('quiz.type_time.MONTHS.id'):
-                return $created_at->copy()->addMonths($time);
-            case config('quiz.type_time.YEARS.id'):
-                return $created_at->copy()->addYears($time);
-        }
     }
 }
