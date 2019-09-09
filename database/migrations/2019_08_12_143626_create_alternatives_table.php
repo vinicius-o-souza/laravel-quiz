@@ -20,7 +20,7 @@ class CreateAlternativesTable extends Migration
          */
         Schema::create('alternatives', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('description');
+            $table->text('description');
             $table->float('value');
             $table->boolean('is_correct');
 

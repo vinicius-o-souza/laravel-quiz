@@ -26,7 +26,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->boolean('is_active')->default(true);
-            $table->string('description');
+            $table->text('description');
             $table->string('hint')->nullable();
             $table->boolean('is_required')->default(true);
             $table->float('weight')->default(1);
