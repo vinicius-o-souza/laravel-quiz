@@ -71,7 +71,7 @@
                                             <!-- Value Field -->
                                             <div class="form-group col-sm-12 col-md-6">
                                                 <label>Peso da alternativa:</label>
-                                                <p> {!! $question->value !!}</p>
+                                                <p> {!! $alternative->value !!}</p>
                                             </div>
                                             
                                             <!-- Is Correct Field -->

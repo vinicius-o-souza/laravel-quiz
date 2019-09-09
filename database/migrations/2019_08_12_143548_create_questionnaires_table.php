@@ -22,7 +22,7 @@ class CreateQuestionnairesTable extends Migration
         Schema::create('questionnaires', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->boolean('is_active')->default(true);
-            $table->string('name');
+            $table->text('name');
             $table->boolean('answer_once')->default(false);
             $table->integer('waiting_time')->nullable();
             $table->integer('type_waiting_time')->nullable();
