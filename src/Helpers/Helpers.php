@@ -3,8 +3,9 @@
 namespace PandoApps\Quiz\Helpers;
 
 use Carbon\Carbon;
- 
-class Helpers {
+
+class Helpers
+{
     
     /**
      * Return time plus another time in some type time

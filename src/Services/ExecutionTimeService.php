@@ -13,11 +13,11 @@ class ExecutionTimeService
     /**
      * Get the key of questionnaire and modelId redis cache
      *
-     * @var Questionnaire $questionnaire
-     * @var $modelId
+     * @var Questionnaire
+     * @var
      * @return void
      */
-    public function getRedisCache($questionnaire, $modelId) 
+    public function getRedisCache($questionnaire, $modelId)
     {
         $redisKey = 'timer:'. $questionnaire->id .':' . $modelId;
         return Redis::get($redisKey);
@@ -26,15 +26,15 @@ class ExecutionTimeService
     /**
      * Set the values of the timer of questionnaire in redis cache
      *
-     * @var Questionnaire $questionnaire
-     * @var $modelId
+     * @var Questionnaire
+     * @var
      * @return void
      */
-    public function startRedisCache($questionnaire, $modelId) 
+    public function startRedisCache($questionnaire, $modelId)
     {
         $ttl = $this->ttl($questionnaire->execution_time, $questionnaire->type_execution_time);
         $redisKey = 'timer:'. $questionnaire->id .':' . $modelId;
-        if(Redis::get($redisKey)) {
+        if (Redis::get($redisKey)) {
             return Redis::get($redisKey);
         }
         $redisValue = Helpers::timePlusTypeTime(Carbon::now(), $questionnaire->execution_time, $questionnaire->type_execution_time);

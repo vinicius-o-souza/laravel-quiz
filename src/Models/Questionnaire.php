@@ -99,10 +99,11 @@ class Questionnaire extends Model
     /**
      * Return if a modelId can execute again the questionnaire
      *
-     * @var $modelId
+     * @var
      * @return boolean
      */
-    public function canExecute($modelId){
+    public function canExecute($modelId)
+    {
         $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         if (!$executionsModel->isEmpty() && isset($this->type_waiting_time)) {
             $lastExecution = $executionsModel->first();
@@ -117,12 +118,13 @@ class Questionnaire extends Model
     /**
      * Return the time to execute again the questionnaire
      *
-     * @var $modelId
+     * @var
      * @return string
      */
-    public function timeToExecuteAgain($modelId){
+    public function timeToExecuteAgain($modelId)
+    {
         $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
-        if(!$this->canExecute($modelId)){
+        if (!$this->canExecute($modelId)) {
             $lastExecution = $executionsModel->first();
             $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $this->waiting_time, $this->type_waiting_time);
             return Carbon::parse($createAtPlusWaitingTime)->diffForHumans();
