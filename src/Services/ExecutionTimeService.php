@@ -9,30 +9,7 @@ use PandoApps\Quiz\Models\Questionnaire;
 
 class ExecutionTimeService
 {
-    
-    /**
-     * Return if can execute again the questionnaire
-     *
-     * @var Questionnaire $questionnaire
-     * @var $modelId
-     * @var $executionsModel
-     * @return boolean
-     */
-    public function canExecutionAgain(Questionnaire $questionnaire, $modelId) 
-    {   
-        $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
-        if (!$executionsModel->isEmpty() && isset($questionnaire->type_waiting_time)) {
-            $lastExecution = $executionsModel->first();
-            $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $questionnaire->waiting_time, $questionnaire->type_waiting_time);
-            if ($createAtPlusWaitingTime > now()) {
-                flash('Você não pode responder o questionário novamente. Volte novamente novamente daqui '. $createAtPlusWaitingTime->diffForHumans() .'!')->error();
-
-                return false;
-            }
-        }
-        return true;
-    }
-    
+        
     /**
      * Get the key of questionnaire and modelId redis cache
      *
