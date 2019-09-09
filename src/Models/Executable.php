@@ -61,5 +61,4 @@ class Executable extends Model
     {
         return $this->morphTo();
     }
-
 }

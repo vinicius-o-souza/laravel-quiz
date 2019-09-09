@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Alternative;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
 class AlternativeDataTable extends DataTable
@@ -21,22 +20,22 @@ class AlternativeDataTable extends DataTable
         $parent_id = request()->parent_id;
         $question_id = request()->question_id;
         
-        if($question_id) {
+        if ($question_id) {
             $alternatives = Alternative::whereHas('question.questionnaire', function (Builder $query) use ($parent_id) {
-                                $query->where('parent_id', $parent_id);
-                            })->where('question_id', $question_id)->with('question')->get();    
+                $query->where('parent_id', $parent_id);
+            })->where('question_id', $question_id)->with('question')->get();
         } else {
             $alternatives = Alternative::whereHas('question.questionnaire', function (Builder $query) use ($parent_id) {
-                                $query->where('parent_id', $parent_id);
-                            })->get();
+                $query->where('parent_id', $parent_id);
+            })->get();
         }
         
         return Datatables::of($alternatives)
-            ->addColumn('action' , 'pandoapps::alternatives.datatables_actions')
-            ->addColumn('question', function(Alternative $alternative) {
+            ->addColumn('action', 'pandoapps::alternatives.datatables_actions')
+            ->addColumn('question', function (Alternative $alternative) {
                 return $alternative->question->description;
             })
-            ->editColumn('is_correct', function(Alternative $alternative) {
+            ->editColumn('is_correct', function (Alternative $alternative) {
                 return $alternative->is_correct ? 'Sim' : 'Não';
             })
             ->rawColumns(['action', 'question']);

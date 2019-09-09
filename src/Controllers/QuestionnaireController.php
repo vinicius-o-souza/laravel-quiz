@@ -6,10 +6,10 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
+use PandoApps\Quiz\DataTables\QuestionnaireDataTable;
 use PandoApps\Quiz\Models\Alternative;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Models\Questionnaire;
-use PandoApps\Quiz\DataTables\QuestionnaireDataTable;
 
 class QuestionnaireController extends Controller
 {
@@ -49,7 +49,7 @@ class QuestionnaireController extends Controller
         if ($questionnaireValidation->fails()) {
             $errors = $questionnaireValidation->errors();
             $msg = '';
-            foreach($errors->all() as $message) {
+            foreach ($errors->all() as $message) {
                 $msg .= $message . '<br>';
             }
             flash($msg)->error();
@@ -59,14 +59,18 @@ class QuestionnaireController extends Controller
         DB::beginTransaction();
 
         $questionnaire = Questionnaire::create([
-            'name'        => $input['name'],
-            'answer_once' => isset($input['answer_once']) ? true : false,
-            'parent_id'   => $request->parent_id,
-            'parent_type' => config('quiz.models.parent_type')
+            'name'                  => $input['name'],
+            'answer_once'           => isset($input['answer_once']) ? true : false,
+            'parent_id'             => $request->parent_id,
+            'parent_type'           => config('quiz.models.parent_type'),
+            'waiting_time'          => isset($input['waiting_time']) ? $input['waiting_time'] : null,
+            'type_waiting_time'     => isset($input['type_waiting_time']) ? $input['type_waiting_time'] : null,
+            'execution_time'        => isset($input['execution_time']) ? $input['execution_time'] : null,
+            'type_execution_time'   => isset($input['type_execution_time']) ? $input['type_execution_time'] : null
         ]);
         
-        if($input['countQuestion'] > 0) {
-            foreach(array_keys($input['description']) as $keyQuestion) {
+        if ($input['countQuestion'] > 0) {
+            foreach (array_keys($input['description']) as $keyQuestion) {
                 $question = Question::create([
                     'description'       => $input['description'][$keyQuestion],
                     'hint'              => isset($input['hint'][$keyQuestion]) ? $input['hint'][$keyQuestion] : null,
@@ -77,23 +81,23 @@ class QuestionnaireController extends Controller
                     'questionnaire_id'  => $questionnaire->id
                 ]);
                 
-                if($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
-                    if($input['countAlternatives'][$keyQuestion] > 0) {
-                        foreach(array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
+                if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+                    if ($input['countAlternatives'][$keyQuestion] > 0) {
+                        foreach (array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
                             Alternative::create([
                                 'description'   => $input['description_alternative'][$keyQuestion][$keyAlternative],
                                 'value'         => $input['value_alternative'][$keyQuestion][$keyAlternative],
                                 'is_correct'    => isset($input['is_correct'][$keyQuestion][$keyAlternative]) ? true : false,
                                 'question_id'   => $question->id,
                             ]);
-                        }    
+                        }
                     } else {
                         flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
                         DB::rollback();
                         return redirect(route('questionnaires.create', $request->parent_id));
-                    }   
-                }    
-            }    
+                    }
+                }
+            }
         } else {
             flash('Questionário devem ter no mínimo 1 questão')->error();
             DB::rollback();
@@ -118,7 +122,7 @@ class QuestionnaireController extends Controller
     {
         $questionnaire = Questionnaire::find($id);
 
-        if(empty($questionnaire)) {
+        if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
             return redirect(route('questionnaires.index', $parentId));
@@ -138,7 +142,7 @@ class QuestionnaireController extends Controller
     {
         $questionnaire = Questionnaire::with('questions')->with('questions.alternatives')->find($id);
 
-        if(empty($questionnaire)) {
+        if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
             return redirect(route('questionnaires.index', $parentId));
@@ -159,7 +163,7 @@ class QuestionnaireController extends Controller
     {
         $questionnaire = Questionnaire::find($id);
 
-        if(empty($questionnaire)) {
+        if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
             return redirect(route('questionnaires.index', $parentId));
@@ -171,14 +175,14 @@ class QuestionnaireController extends Controller
         if ($questionnaireValidation->fails()) {
             $errors = $questionnaireValidation->errors();
             $msg = '';
-            foreach($errors->all() as $message) {
+            foreach ($errors->all() as $message) {
                 $msg .= $message . '<br>';
             }
             flash($msg)->error();
             return redirect()->back()->withInput();
         }
 
-        if(isset($input['answer_once'])) {
+        if (isset($input['answer_once'])) {
             $input['answer_once'] = true;
         } else {
             $input['answer_once'] = false;
@@ -186,7 +190,7 @@ class QuestionnaireController extends Controller
         
         $inputQuestionnaire = $request->only('name', 'answer_once');
         
-        if(isset($input['answer_once'])) {
+        if (isset($input['answer_once'])) {
             $inputQuestionnaire['answer_once'] = true;
         } else {
             $inputQuestionnaire['answer_once'] = false;
@@ -194,12 +198,12 @@ class QuestionnaireController extends Controller
         
         $questionnaire->update($inputQuestionnaire);
         
-        foreach(array_keys($input['description']) as $keyQuestion) {
+        foreach (array_keys($input['description']) as $keyQuestion) {
             $question = Question::updateOrCreate(
                 [
                     'id'                => $keyQuestion,
                     'questionnaire_id'  => $questionnaire->id
-                ],    
+                ],
                 [
                     'description'       => $input['description'][$keyQuestion],
                     'hint'              => isset($input['hint'][$keyQuestion]) ? $input['hint'][$keyQuestion] : null,
@@ -210,27 +214,27 @@ class QuestionnaireController extends Controller
                 ]
             );
             
-            if($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
-                if($input['countAlternatives'][$keyQuestion] > 0) {
-                    foreach(array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
+            if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+                if ($input['countAlternatives'][$keyQuestion] > 0) {
+                    foreach (array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
                         Alternative::updateOrCreate(
                             [
                                 'id'            => $keyAlternative,
                                 'question_id'   => $question->id
-                            ],    
+                            ],
                             [
                                 'description'   => $input['description_alternative'][$keyQuestion][$keyAlternative],
                                 'value'         => $input['value_alternative'][$keyQuestion][$keyAlternative],
                                 'is_correct'    => isset($input['is_correct'][$keyQuestion][$keyAlternative]) ? true : false,
                             ]
                         );
-                    }    
+                    }
                 } else {
                     flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
                     DB::rollback();
                     return redirect(route('questionnaires.create', $parentId));
-                }   
-            }    
+                }
+            }
         }
 
         flash('Questionário atualizado com sucesso!')->success();
@@ -249,7 +253,7 @@ class QuestionnaireController extends Controller
     {
         $questionnaire = Questionnaire::find($id);
 
-        if(empty($questionnaire)) {
+        if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
             return redirect(route('questionnaires.index', $parentId));

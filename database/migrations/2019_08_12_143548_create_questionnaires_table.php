@@ -24,6 +24,10 @@ class CreateQuestionnairesTable extends Migration
             $table->boolean('is_active')->default(true);
             $table->string('name');
             $table->boolean('answer_once')->default(false);
+            $table->integer('waiting_time')->nullable();
+            $table->integer('type_waiting_time')->nullable();
+            $table->integer('execution_time')->nullable();
+            $table->integer('type_execution_time')->nullable();
 
             $table->integer('parent_id');
             $table->string('parent_type');

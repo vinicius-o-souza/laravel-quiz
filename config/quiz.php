@@ -26,5 +26,13 @@ return [
         'OPEN'          => ['id' => 1, 'name' => 'Questão aberta', 'description' => 'Questão com resposta livre para o usuário'],
         'CLOSED'        => ['id' => 2, 'name' => 'Questão fechada', 'description' => 'Questão fechada com alternativas de respostas para o usuário'],
 
+    ],
+    
+    'type_time' => [
+        'MINUTES'   => ['id' => 1,    'name' => 'Minutos'],
+        'HOURS'     => ['id' => 2,    'name' => 'Horas'],
+        'DAYS'      => ['id' => 3,    'name' => 'Dias'],
+        'MONTHS'    => ['id' => 4,    'name' => 'Meses'],
+        'YEARS'     => ['id' => 5,    'name' => 'Anos'],
     ]
 ];

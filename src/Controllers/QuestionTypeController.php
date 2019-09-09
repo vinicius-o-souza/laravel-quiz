@@ -12,14 +12,14 @@ class QuestionTypeController extends Controller
 
     /**
      * Retorna todos os questionários cadastrados
-     * 
+     *
      * @return response
      */
     public function index()
     {
         $questionType = QuestionType::all();
 
-        return view('pandoapps::question_types.index',compact('questionType'));
+        return view('pandoapps::question_types.index', compact('questionType'));
     }
 
     /**
@@ -32,7 +32,7 @@ class QuestionTypeController extends Controller
 
     /**
      * Salva um questionário
-     * 
+     *
      * @param Request $request
      * @return response
      */
@@ -44,7 +44,7 @@ class QuestionTypeController extends Controller
         if ($questionTypeValidation->fails()) {
             $errors = $questionTypeValidation->errors();
             $msg = '';
-            foreach($errors->all() as $message) {
+            foreach ($errors->all() as $message) {
                 $msg .= $message . '<br>';
             }
             flash($msg)->error();
@@ -63,7 +63,7 @@ class QuestionTypeController extends Controller
 
     /**
      * Exibe o questionário para edição
-     * 
+     *
      * @param $id
      * @return response
      */
@@ -71,8 +71,7 @@ class QuestionTypeController extends Controller
     {
         $questionType = QuestionType::find($id);
 
-        if(empty($questionType))
-        {
+        if (empty($questionType)) {
             flash('Tipo de questão não encontrado!')->error();
 
             return redirect(route('question_types.index', $questionType->id));
@@ -83,7 +82,7 @@ class QuestionTypeController extends Controller
 
     /**
      * Atualiza um questionário
-     * 
+     *
      * @param $id
      * @param Request $request
      * @return response
@@ -92,7 +91,7 @@ class QuestionTypeController extends Controller
     {
         $questionType = QuestionType::find($id);
 
-        if(empty($questionType)) {
+        if (empty($questionType)) {
             flash('Tipo de questão não encontrado!')->error();
 
             return redirect(route('question_types.index'));
@@ -104,7 +103,7 @@ class QuestionTypeController extends Controller
         if ($questionTypeValidation->fails()) {
             $errors = $questionTypeValidation->errors();
             $msg = '';
-            foreach($errors->all() as $message) {
+            foreach ($errors->all() as $message) {
                 $msg .= $message . '<br>';
             }
             flash($msg)->error();
@@ -120,7 +119,7 @@ class QuestionTypeController extends Controller
 
     /**
      * Exibe um questionário pelo id
-     * 
+     *
      * @param $id
      * @return response
      */
@@ -128,7 +127,7 @@ class QuestionTypeController extends Controller
     {
         $questionType = QuestionType::find($id);
 
-        if(empty($questionType)) {
+        if (empty($questionType)) {
             flash('Tipo de questão não encontrado!')->error();
 
             return redirect(route('question_types.index', $questionType->id));
@@ -138,8 +137,8 @@ class QuestionTypeController extends Controller
     }
 
     /**
-     * Deleta um questionário 
-     * 
+     * Deleta um questionário
+     *
      * @param $id
      * @return response
      */
@@ -147,13 +146,12 @@ class QuestionTypeController extends Controller
     {
         $questionType = QuestionType::find($id);
 
-        if(empty($questionType)) {
+        if (empty($questionType)) {
             flash('Tipo de questão não encontrado!')->error();
 
             return redirect(route('question_types.index', $questionType->id));
         }
 
-        $id = $questionType->id;
         $questionType->delete();
 
         flash('Tipo de questão deletado com sucesso!')->success();

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Executable;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
 class ExecutableDataTable extends DataTable
@@ -25,30 +24,29 @@ class ExecutableDataTable extends DataTable
         $executables = Executable::whereHas('questionnaire', function (Builder $query) use ($parentId) {
             $query->where('parent_id', $parentId);
         });
-        if($modelId) {
+        if ($modelId) {
             $executables->where('executable_id', $modelId);
         }
-        if($questionnaireId) {
+        if ($questionnaireId) {
             $executables->where('questionnaire_id', $questionnaireId);
         }
         
-        $executables->get(); 
+        $executables->get();
         
 
         return Datatables::of($executables)
-            ->addColumn('action' , 'pandoapps::executables.datatables_actions')
-            ->editColumn('questionnaire_id', function(Executable $executable) {
+            ->addColumn('action', 'pandoapps::executables.datatables_actions')
+            ->editColumn('questionnaire_id', function (Executable $executable) {
                 return $executable->questionnaire->name;
             })
-            ->editColumn('executable_id', function(Executable $executable) {
-                $type = $executable->executable_type;
+            ->editColumn('executable_id', function (Executable $executable) {
                 $columnName = config('quiz.models.executable_column_name');
                 if ($columnName) {
-                   return $executable->executable->$columnName; 
+                    return $executable->executable->$columnName;
                 }
                 return $executable->id;
             })
-            ->editColumn('created_at', function(Executable $executable) {
+            ->editColumn('created_at', function (Executable $executable) {
                 return $executable->created_at->format('d/m/Y');
             });
     }
@@ -75,7 +73,7 @@ class ExecutableDataTable extends DataTable
     protected function getColumns()
     {
         $modelId = request()->model_id;
-        if($modelId) {
+        if ($modelId) {
             return [
                 'questionnaire_id'  => ['title' => 'Questionário'],
                 'score'             => ['title' => 'Nota'],

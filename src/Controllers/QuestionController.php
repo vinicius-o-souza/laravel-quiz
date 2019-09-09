@@ -4,10 +4,8 @@ namespace PandoApps\Quiz\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Validator;
-use PandoApps\Quiz\Models\Question;
-use PandoApps\Quiz\Models\QuestionType;
 use PandoApps\Quiz\DataTables\QuestionDataTable;
+use PandoApps\Quiz\Models\Question;
 
 class QuestionController extends Controller
 {
@@ -17,7 +15,7 @@ class QuestionController extends Controller
      *
      * @param QuestionDataTable $questionDataTable
      * @return \Illuminate\Http\Response
-     */    
+     */
     public function index(QuestionDataTable $questionDataTable)
     {
         return $questionDataTable->render('pandoapps::questions.index');
@@ -34,7 +32,7 @@ class QuestionController extends Controller
     {
         $question = Question::find($id);
 
-        if(empty($question)) {
+        if (empty($question)) {
             flash('Questão não encontrada!')->error();
 
             return redirect(route('questions.index', $parentId));
@@ -54,18 +52,17 @@ class QuestionController extends Controller
     {
         $question = Question::find($id);
 
-        if(empty($question)) {
+        if (empty($question)) {
             flash('Questão não encontrada!')->error();
 
             return redirect(route('questions.index', $parentId));
         }
 
-        $id = $question->id;
         $question->delete();
 
-        if(request()->ajax()) {
+        if (request()->ajax()) {
             return response()->json(['status' => 'Questão deletada']);
-        } 
+        }
         flash('Questão deletada com sucesso!')->success();
 
         return redirect(route('questions.index', $parentId));

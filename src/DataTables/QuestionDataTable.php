@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Services\DataTablesDefaults;
 use Yajra\DataTables\Datatables;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
 class QuestionDataTable extends DataTable
@@ -21,32 +20,33 @@ class QuestionDataTable extends DataTable
         $parent_id = request()->parent_id;
         $questionnaire_id = request()->questionnaire_id;
         
-        if($questionnaire_id) {
+        if ($questionnaire_id) {
             $questions = Question::where('questionnaire_id', $questionnaire_id)->with('questionnaire')->with('questionType')->get();
         } else {
             $questions = Question::whereHas('questionnaire', function (Builder $query) use ($parent_id) {
-                            $query->where('parent_id', $parent_id);
-                        })->get();
+                $query->where('parent_id', $parent_id);
+            })->get();
         }
         
 
         return Datatables::of($questions)
-            ->addColumn('action' , 'pandoapps::questions.datatables_actions')
-            ->addColumn('question_type', function(Question $question) {
+            ->addColumn('action', 'pandoapps::questions.datatables_actions')
+            ->addColumn('question_type', function (Question $question) {
                 return $question->questionType->name;
             })
-            ->editColumn('is_active', function(Question $question) {
+            ->editColumn('is_active', function (Question $question) {
                 return $question->is_active ? 'Sim' : 'Não';
             })
-            ->editColumn('is_required', function(Question $question) {
+            ->editColumn('is_required', function (Question $question) {
                 return $question->is_required ? 'Sim' : 'Não';
             })
-            ->editColumn('questionnaire_id', function(Question $question) {
+            ->editColumn('questionnaire_id', function (Question $question) {
                 return $question->questionnaire->name;
             })
-            ->addColumn('alternatives', function(Question $question) {
-                if($question->question_type_id == config('quiz.question_types.CLOSED.id'))
+            ->addColumn('alternatives', function (Question $question) {
+                if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
                     return '<a href="'. route('alternatives.index', ['question_id' => $question->id]) .'"> Alternativas </a>';
+                }
                 return '';
             })
             ->rawColumns(['action', 'question_type', 'is_active', 'is_required', 'alternatives']);
@@ -74,7 +74,7 @@ class QuestionDataTable extends DataTable
     protected function getColumns()
     {
         $questionnaire_id = request()->questionnaire_id;
-        if($questionnaire_id) {
+        if ($questionnaire_id) {
             return [
                 'question_type'     => ['title' => 'Tipo da Questão'],
                 'description'        => ['title' => 'Descrição'],
