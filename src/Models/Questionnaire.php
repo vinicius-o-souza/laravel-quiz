@@ -2,7 +2,9 @@
 
 namespace PandoApps\Quiz\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use PandoApps\Quiz\Helpers\Helpers;
 
 class Questionnaire extends Model
 {
@@ -104,7 +106,7 @@ class Questionnaire extends Model
         $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         if (!$executionsModel->isEmpty() && isset($this->type_waiting_time)) {
             $lastExecution = $executionsModel->first();
-            $createAtPlusWaitingTime = Helpers::handlePlusTime($lastExecution->pivot->created_at, $this->type_waiting_time, $this->waiting_time);
+            $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $this->waiting_time, $this->type_waiting_time);
             if ($createAtPlusWaitingTime > now()) {
                 return false;
             }
@@ -119,9 +121,10 @@ class Questionnaire extends Model
      * @return string
      */
     public function timeToExecuteAgain($modelId){
+        $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         if(!$this->canExecute($modelId)){
             $lastExecution = $executionsModel->first();
-            $createAtPlusWaitingTime = Helpers::handlePlusTime($lastExecution->pivot->created_at, $this->type_waiting_time, $this->waiting_time);
+            $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $this->waiting_time, $this->type_waiting_time);
             return Carbon::parse($createAtPlusWaitingTime)->diffForHumans();
         }
         return "Nenhum";
