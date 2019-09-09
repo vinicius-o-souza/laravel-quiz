@@ -10,6 +10,7 @@ use PandoApps\Quiz\Models\Answer;
 use PandoApps\Quiz\Models\Executable;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Models\Questionnaire;
+use PandoApps\Quiz\Services\ExecutionTimeService;
 
 class ExecutableController extends Controller
 {
@@ -82,6 +83,19 @@ class ExecutableController extends Controller
     public function store(Request $request)
     {
         $input = $request->except('_token');
+        
+        $questionnaire = Questionnaire::find($request->questionnaire_id);
+        
+        if (empty($questionnaire)) {
+            flash('Questionário não encontrado!')->error();
+
+            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
+        }
+        
+        if (!$questionnaire->canExecute($request->model_id)) {
+            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
+            return redirect()->back();
+        }
         
         $executable = Executable::create([
             'executable_id'         => $request->model_id,
