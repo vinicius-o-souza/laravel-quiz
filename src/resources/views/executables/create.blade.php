@@ -51,8 +51,6 @@
 
 @push('scripts_quiz')
     <script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}" type="text/javascript"></script> 
-    <script src="{{ asset('vendor/pandoapps/js/socketTimer.js') }}" type="text/javascript"></script> 
-    <script src="{{ asset('vendor/pandoapps/js/teste.js') }}" type="text/javascript"></script> 
     <script type="text/javascript">
         $('input[required]').on('invalid', function() {
             this.setCustomValidity('Campo de preenchimento obrigatório.');
