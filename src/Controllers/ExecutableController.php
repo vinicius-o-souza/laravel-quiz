@@ -59,11 +59,6 @@ class ExecutableController extends Controller
                 return redirect(route('questionnaires.index', $parentId));
             }
         }
-        
-        if ($questionnaire->execution_time) {
-            $executionTime = $executionTimeService->startRedisCache($questionnaire, $modelId);
-            return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
-        }
 
         return view('pandoapps::executables.create', compact('questionnaire', 'modelId'));
     }
@@ -76,17 +71,18 @@ class ExecutableController extends Controller
      */
     public function store(Request $request, ExecutionTimeService $executionTimeService)
     {
-        $input = $request->except(['_token', 'model_id']);
-
-        $modelId = $request->only(['model_id']);
-        $modelId = $modelId['model_id'];
+        $input = $request->except(['_token', 'model_id', 'questionnaire_id']);
         
-        $questionnaire = Questionnaire::find($request->questionnaire_id);
+        $variables = $request->only(['model_id', 'questionnaire_id']);
+        $modelId = $variables['model_id'];
+        $questionnaireId = $variables['questionnaire_id'];
+        
+        $questionnaire = Questionnaire::find($questionnaireId);
         
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
         
         if (!$questionnaire->canExecute($modelId)) {
@@ -148,7 +144,7 @@ class ExecutableController extends Controller
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $modelId]));
+        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
     }
 
     /**
@@ -180,9 +176,17 @@ class ExecutableController extends Controller
      * @param  int  $questionnaireId
      * @return \Illuminate\Http\Response
      */
-    public function handleStartExecutable(Request $request, $questionnaireId)
+    public function handleStartExecutable(Request $request, $questionnaireId, ExecutionTimeService $executionTimeService)
     {
         $input = $request->all();
+        
+        $questionnaire = Questionnaire::find($questionnaireId);
+        
+        if (empty($questionnaire)) {
+            flash('Questionário não encontrado!')->error();
+            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $questionnaireId, 'model_id' => $input['model_id']]));
+        }
+        
         $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
                                 ->where('executable_id', $input['model_id'])
                                 ->where('executable_type', config('quiz.models.executable'))->first();
@@ -195,10 +199,26 @@ class ExecutableController extends Controller
                 'score'                 => 0,
                 'answered'              => null
             ]);
-
-            return response()->json(['status' => 'success'], 200);
         }
-
-        return response()->json(['status' => 'error'], 401);
+        
+        $executable = Executable::create([
+            'executable_id'         => $input['model_id'],
+            'executable_type'       => config('quiz.models.executable'),
+            'questionnaire_id'      => $questionnaireId,
+            'score'                 => 0,
+            'answered'              => null
+        ]);
+        
+        if ($questionnaire->execution_time) {
+            $executionTime = $executionTimeService->startRedisCache($questionnaire, $input['model_id']);
+            return response()->json([
+                'status'            => 'success',
+                'executionTime'     => 'executionTime'
+            ], 200);
+        }
+        
+        return response()->json([
+            'status'            => 'success',
+        ], 200);
     }
 }

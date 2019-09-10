@@ -74,10 +74,10 @@
             var modelId = $('#model_id').val();
             var questionnaireId = $('#questionnaire_id').val();
             $.ajax({
-                type:'POST',
                 url:'{!! route("executables.start", request()->parent_id) !!}',
                 data:{
-                    questionnaire_id: 
+                    "_token": "{{ csrf_token() }}",
+                    questionnaire_id: questionnaireId,
                     model_id: modelId
                 },
                 success:function(data){
@@ -91,10 +91,11 @@
                     }
                     $('#start_block').hide();
                     $('#questionnaire_form').show();
-                    @if(isset($executionTime))
-                        var time = '{!! $executionTime !!}';
-                        timer(time);
-                    @endif
+                    if(data.status == success) {
+                        if(data.executionTime) {
+                            timer(data.executionTime);    
+                        }
+                    }
                 },
                 error: function(data) {
                     swal({
