@@ -23,7 +23,8 @@ class Executable extends Model
         'executable_id',
         'executable_type',
         'questionnaire_id',
-        'score'
+        'score',
+        'answered'
     ];
 
     /**
@@ -35,7 +36,8 @@ class Executable extends Model
         'id'          => 'integer',
         'name'        => 'string',
         'description' => 'string',
-        'score'       => 'float'
+        'score'       => 'float',
+        'answered'    => 'boolean'
     ];
 
     /**

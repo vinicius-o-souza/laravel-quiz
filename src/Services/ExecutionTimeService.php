@@ -5,10 +5,28 @@ namespace PandoApps\Quiz\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redis;
 use PandoApps\Quiz\Helpers\Helpers;
+use PandoApps\Quiz\Models\Executable;
 use PandoApps\Quiz\Models\Questionnaire;
 
 class ExecutionTimeService
 {
+
+    /**
+     * Get the key of questionnaire and modelId redis cache
+     *
+     * @var Questionnaire
+     * @var
+     * @return void
+     */
+    public function handleIfHasExecutableNotAnswered($questionnaireId, $modelId)
+    {
+        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
+                                ->where('executable_id', $modelId)
+                                ->where('executable_type', config('quiz.models.executable'))->first();
+        if (!empty($executable)) {
+            $executable->update(['answered' => false]);
+        }
+    }
         
     /**
      * Get the key of questionnaire and modelId redis cache

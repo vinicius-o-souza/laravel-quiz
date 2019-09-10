@@ -29,21 +29,22 @@ class ExecutableController extends Controller
      * Show the form for creating a new resource.
      *
      * @param int $parentId
-     * @param int $idQuestionnaire
+     * @param int $questionnaireId
      * @param int $modelId
      * @return \Illuminate\Http\Response
      */
-    public function create($parentId, $idQuestionnaire, $modelId, ExecutionTimeService $executionTimeService)
+    public function create($parentId, $questionnaireId, $modelId, ExecutionTimeService $executionTimeService)
     {
         $questionnaire = Questionnaire::with(['questions' => function ($query) {
             $query->where('is_active', 1);
-        }, 'questions.alternatives'])
-                                        ->find($idQuestionnaire);
+        }, 'questions.alternatives'])->find($questionnaireId);
+        
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-
-            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
+
+        $executionTimeService->handleIfHasExecutableNotAnswered($questionnaireId, $modelId);
         
         if (!$questionnaire->canExecute($modelId)) {
             flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
@@ -55,7 +56,6 @@ class ExecutableController extends Controller
             $executionModelCount = $executionsModel->count();
             if ($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
-
                 return redirect(route('questionnaires.index', $parentId));
             }
         }
@@ -76,27 +76,32 @@ class ExecutableController extends Controller
      */
     public function store(Request $request, ExecutionTimeService $executionTimeService)
     {
-        $input = $request->except('_token');
+        $input = $request->except(['_token', 'model_id']);
+
+        $modelId = $request->only(['model_id']);
+        $modelId = $modelId['model_id'];
         
         $questionnaire = Questionnaire::find($request->questionnaire_id);
         
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
+            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $modelId]));
         }
         
-        if (!$questionnaire->canExecute($request->model_id)) {
-            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($request->model_id) .'!')->error();
+        if (!$questionnaire->canExecute($modelId)) {
+            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
             return redirect()->back();
         }
         
-        $executable = Executable::create([
-            'executable_id'         => $request->model_id,
-            'executable_type'       => config('quiz.models.executable'),
-            'questionnaire_id'      => $request->questionnaire_id,
-            'score'                 => 0
-        ]);
+        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
+                                ->where('executable_id', $modelId)
+                                ->where('executable_type', config('quiz.models.executable'))->first();
+
+        if (empty($executable)) {
+            flash('Ocorreu um erro ao tentar submeter o questionário!')->error();
+            return redirect()->back();
+        }
         
         $sumWeight = 0;
         $sumValues = 0;
@@ -135,12 +140,15 @@ class ExecutableController extends Controller
         
         if ($sumValues && $sumWeight) {
             $scoreTotal = $sumValues / $sumWeight;
-            $executable->update(['score' => $scoreTotal]);
+            $executable->update([
+                'score'     => $scoreTotal,
+                'answered'  => true
+            ]);
         }
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
+        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $modelId]));
     }
 
     /**
@@ -163,5 +171,34 @@ class ExecutableController extends Controller
         }
         
         return view('pandoapps::executables.show', compact('executable'));
+    }
+
+    /**
+     * Create a executable if start a executable
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $questionnaireId
+     * @return \Illuminate\Http\Response
+     */
+    public function handleStartExecutable(Request $request, $questionnaireId)
+    {
+        $input = $request->all();
+        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
+                                ->where('executable_id', $input['model_id'])
+                                ->where('executable_type', config('quiz.models.executable'))->first();
+
+        if (empty($executable)) {
+            $executable = Executable::create([
+                'executable_id'         => $input['model_id'],
+                'executable_type'       => config('quiz.models.executable'),
+                'questionnaire_id'      => $questionnaireId,
+                'score'                 => 0,
+                'answered'              => null
+            ]);
+
+            return response()->json(['status' => 'success'], 200);
+        }
+
+        return response()->json(['status' => 'error'], 401);
     }
 }
