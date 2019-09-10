@@ -25,7 +25,7 @@
     
     <!-- Type Waiting Time Field -->
     <div class="form-group col-sm-6">
-        {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
+        {!! Form::label('waiting_time', 'Tipo do Tempo de Espera:') !!}
         <select id="type_waiting_time" name="type_waiting_time" class="form-control select2">
             <option value="{{ config('quiz.type_time.MINUTES.id') }}"
                     {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
@@ -60,13 +60,13 @@
 <div class="row col-sm-12" id="execution_time_block">
     <!-- Execution Time Field -->
     <div class="form-group col-sm-6">
-        {!! Form::label('execution_time', 'Tempo de Espera:') !!}
+        {!! Form::label('execution_time', 'Tempo de Execução:') !!}
         {!! Form::text('execution_time', null, ['class' => 'form-control']) !!}
     </div>
     
     <!-- Type execution Time Field -->
     <div class="form-group col-sm-6">
-        {!! Form::label('execution_time', 'Tempo de Espera:') !!}
+        {!! Form::label('execution_time', 'Tipo do Tempo de Espera:') !!}
         <select id="type_execution_time" name="type_execution_time" class="form-control select2">
             <option value="{{ config('quiz.type_time.MINUTES.id') }}"
                     {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
@@ -259,9 +259,17 @@
             }
         });
         
-        $('#waiting_time_block').hide();
-        $('#waiting_time_block input').attr('disabled', true);
-        $('#waiting_time_block select').attr('disabled', true);
+        if(questionnaireEdit) {
+            
+        } else {
+            $('#waiting_time_block').hide();
+            $('#waiting_time_block input').attr('disabled', true);
+            $('#waiting_time_block select').attr('disabled', true);   
+            $('#execution_time_block').hide();
+            $('#execution_time_block input').attr('disabled', true);
+            $('#execution_time_block select').attr('disabled', true);
+        }
+        
         $(document).on('change', '#checkbox_waiting_time', function () {
             if($('#checkbox_waiting_time').prop('checked')) {
                 $('#waiting_time_block').show();
@@ -274,9 +282,6 @@
             }
         });
         
-        $('#execution_time_block').hide();
-        $('#execution_time_block input').attr('disabled', true);
-        $('#execution_time_block select').attr('disabled', true);
         $(document).on('change', '#checkbox_execution_time', function () {
             if($('#checkbox_execution_time').prop('checked')) {
                 $('#execution_time_block').show();

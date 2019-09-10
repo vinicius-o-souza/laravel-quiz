@@ -188,7 +188,7 @@ class QuestionnaireController extends Controller
             $input['answer_once'] = false;
         }
         
-        $inputQuestionnaire = $request->only('name', 'answer_once');
+        $inputQuestionnaire = $request->only('name', 'answer_once', 'waiting_time', 'type_waiting_time', 'execution_time', 'type_execution_time');
         
         if (isset($input['answer_once'])) {
             $inputQuestionnaire['answer_once'] = true;
