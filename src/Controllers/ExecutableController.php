@@ -29,40 +29,35 @@ class ExecutableController extends Controller
      * Show the form for creating a new resource.
      *
      * @param int $parentId
-     * @param int $idQuestionnaire
+     * @param int $questionnaireId
      * @param int $modelId
      * @return \Illuminate\Http\Response
      */
-    public function create($parentId, $idQuestionnaire, $modelId, ExecutionTimeService $executionTimeService)
+    public function create($parentId, $questionnaireId, $modelId, ExecutionTimeService $executionTimeService)
     {
         $questionnaire = Questionnaire::with(['questions' => function ($query) {
             $query->where('is_active', 1);
-        }, 'questions.alternatives'])
-                                        ->find($idQuestionnaire);
+        }, 'questions.alternatives'])->find($questionnaireId);
+        
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
+            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
+        }
 
-            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $idQuestionnaire, 'model_id' => $modelId]));
-        }
-        
-        if (!$questionnaire->canExecute($modelId)) {
-            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
-            return redirect()->back();
-        }
+        $executionTimeService->handleIfHasExecutableNotAnswered($questionnaire, $modelId);
         
         if ($questionnaire->answer_once) {
             $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
             $executionModelCount = $executionsModel->count();
             if ($executionModelCount > 1) {
                 flash('Questionário só pode ser respondido uma vez!')->error();
-
                 return redirect(route('questionnaires.index', $parentId));
             }
         }
         
-        if ($questionnaire->execution_time) {
-            $executionTime = $executionTimeService->startRedisCache($questionnaire, $modelId);
-            return view('pandoapps::executables.create', compact('questionnaire', 'modelId', 'executionTime'));
+        if (!$questionnaire->canExecute($modelId)) {
+            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
+            return redirect()->back();
         }
 
         return view('pandoapps::executables.create', compact('questionnaire', 'modelId'));
@@ -76,71 +71,90 @@ class ExecutableController extends Controller
      */
     public function store(Request $request, ExecutionTimeService $executionTimeService)
     {
-        $input = $request->except('_token');
+        $input = $request->except(['_token', 'model_id', 'questionnaire_id']);
         
-        $questionnaire = Questionnaire::find($request->questionnaire_id);
+        $variables = $request->only(['model_id', 'questionnaire_id']);
+        $modelId = $variables['model_id'];
+        $questionnaireId = $variables['questionnaire_id'];
+        
+        $questionnaire = Questionnaire::find($questionnaireId);
         
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
 
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
+            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
         
-        if (!$questionnaire->canExecute($request->model_id)) {
+        if (!$questionnaire->canExecute($modelId)) {
             flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
             return redirect()->back();
         }
         
-        $executable = Executable::create([
-            'executable_id'         => $request->model_id,
-            'executable_type'       => config('quiz.models.executable'),
-            'questionnaire_id'      => $request->questionnaire_id,
-            'score'                 => 0
-        ]);
+        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
+                                ->where('executable_id', $modelId)
+                                ->where('executable_type', config('quiz.models.executable'))->first();
+
+        if (empty($executable)) {
+            flash('Ocorreu um erro ao tentar submeter o questionário!')->error();
+            return redirect()->back();
+        }
         
         $sumWeight = 0;
         $sumValues = 0;
-        foreach ($input as $idQuestion => $answer) {
-            $question = Question::find($idQuestion);
-            
-            if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
-                $alternative = Alternative::find($answer);
+        if($input) {
+            foreach ($input as $idQuestion => $answer) {
+                $question = Question::find($idQuestion);
                 
-                if ($alternative->is_correct) {
-                    $score = $question->weight * $alternative->value;
-                    $sumValues += $question->weight * $alternative->value;
-                    $sumWeight += $question->weight;
+                if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+                    $alternative = Alternative::find($answer);
+                    
+                    if ($alternative->is_correct) {
+                        $score = $question->weight * $alternative->value;
+                        $sumValues += $question->weight * $alternative->value;
+                        $sumWeight += $question->weight;
+                    } else {
+                        $score = 0;
+                    }
+                    
+                    Answer::create([
+                        'executable_id'      => $executable->id,
+                        'alternative_id'    => $answer,
+                        'question_id'       => $idQuestion,
+                        'score'             => $score,
+                   ]);
                 } else {
-                    $score = 0;
+                    $sumValues = null;
+                    $sumWeight = null;
+                    Answer::create([
+                        'executable_id'      => $executable->id,
+                        'alternative_id'    => null,
+                        'question_id'       => $idQuestion,
+                        'description'       => $answer,
+                        'score'             => null
+                   ]);
                 }
-                
-                Answer::create([
-                    'executable_id'      => $executable->id,
-                    'alternative_id'    => $answer,
-                    'question_id'       => $idQuestion,
-                    'score'             => $score,
-               ]);
-            } else {
-                $sumValues = null;
-                $sumWeight = null;
-                Answer::create([
-                    'executable_id'      => $executable->id,
-                    'alternative_id'    => null,
-                    'question_id'       => $idQuestion,
-                    'description'       => $answer,
-                    'score'             => null
-               ]);
             }
+            
+            if ($sumValues && $sumWeight) {
+                $scoreTotal = $sumValues / $sumWeight;
+            } else {
+                $scoreTotal = 0;
+            }
+            $executable->update([
+                'score'     => $scoreTotal,
+                'answered'  => true
+            ]);
+        } else {
+            $executable->update([
+                'score'     => 0,
+                'answered'  => false
+            ]);
         }
         
-        if ($sumValues && $sumWeight) {
-            $scoreTotal = $sumValues / $sumWeight;
-            $executable->update(['score' => $scoreTotal]);
-        }
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $request->questionnaire_id, 'model_id' => $request->model_id]));
+        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
     }
 
     /**
@@ -163,5 +177,50 @@ class ExecutableController extends Controller
         }
         
         return view('pandoapps::executables.show', compact('executable'));
+    }
+
+    /**
+     * Create a executable if start a executable
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $questionnaireId
+     * @return \Illuminate\Http\Response
+     */
+    public function handleStartExecutable(Request $request, $questionnaireId, ExecutionTimeService $executionTimeService)
+    {
+        $input = $request->all();
+        
+        $questionnaire = Questionnaire::find($questionnaireId);
+        
+        if (empty($questionnaire)) {
+            flash('Questionário não encontrado!')->error();
+            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $questionnaireId, 'model_id' => $input['model_id']]));
+        }
+        
+        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
+                                ->where('executable_id', $input['model_id'])
+                                ->where('executable_type', config('quiz.models.executable'))->first();
+
+        if (empty($executable)) {
+            $executable = Executable::create([
+                'executable_id'         => $input['model_id'],
+                'executable_type'       => config('quiz.models.executable'),
+                'questionnaire_id'      => $questionnaireId,
+                'score'                 => 0,
+                'answered'              => null
+            ]);
+        }
+        
+        if ($questionnaire->execution_time) {
+            $executionTime = $executionTimeService->startRedisCache($questionnaire, $input['model_id']);
+            return response()->json([
+                'status'            => 'success',
+                'executionTime'     => $executionTime
+            ], 200);
+        }
+        
+        return response()->json([
+            'status'            => 'success',
+        ], 200);
     }
 }

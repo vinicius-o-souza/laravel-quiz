@@ -18,7 +18,9 @@
                 </div>
                 <div id="questionnaire_form">
                     <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
-                    {!! Form::open(['route' => ['executables.store', request()->parent_id, $questionnaire->id, request()->model_id], 'class' => 'w-100']) !!}
+                    {!! Form::open(['route' => ['executables.store', request()->parent_id], 'class' => 'w-100']) !!}
+                        <input id="model_id" type="hidden" name="model_id" value="{{ Auth::user()->id }}">
+                        <input id="questionnaire_id" type="hidden" name="questionnaire_id" value="{{ $questionnaire->id }}">
                         <div class="row p-md-5">
                             @foreach($questionnaire->questions as $key => $question)
                                 <div class="form-group col-sm-12 col-md-6">
@@ -51,6 +53,7 @@
 
 @push('scripts_quiz')
     <script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}" type="text/javascript"></script> 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript">
         $('input[required]').on('invalid', function() {
             this.setCustomValidity('Campo de preenchimento obrigatório.');
@@ -60,15 +63,50 @@
         });
         
         $('#questionnaire_form').hide();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
     
         $(document).on("click", "#start_button", function() {
-            $('#start_block').hide();
-            $('#questionnaire_form').show();
-            @if(isset($executionTime))
-                var time = '{!! $executionTime !!}';
-                timer(time);
-            @endif
-        });
+            var modelId = $('#model_id').val();
+            var questionnaireId = $('#questionnaire_id').val();
+            $.ajax({
+                url:'{!! route("executables.start", request()->parent_id) !!}',
+                data:{
+                    "_token": "{{ csrf_token() }}",
+                    questionnaire_id: questionnaireId,
+                    model_id: modelId
+                },
+                success:function(data){
+                    if(data.status == 'error') {
+                        swal({
+                            title: "Atenção!", 
+                            text: "Você já iniciou uma execução dessa prova, só será permitido uma submissão por vez!", 
+                            icon: "warning",
+                            dangerMode: true,
+                        });
+                    }
+                    $('#start_block').hide();
+                    $('#questionnaire_form').show();
+                    if(data.status == 'success') {
+                        if(data.executionTime) {
+                            timer(data.executionTime);    
+                        }
+                    }
+                },
+                error: function(data) {
+                    swal({
+                        title: "Erro!", 
+                        text: "Ocorre um erro ao iniciar a prova, tente novamente mais tarde!", 
+                        icon: "error",
+                        dangerMode: true,
+                    });
+                }
+            });
+        });            
         
         function timer(time) {
             // Set the date we're counting down to

@@ -18,6 +18,8 @@ Route::group(['prefix' => 'parent/{parent_id}'], function () {
         
         Route::get('{questionnaire_id}/create/{model_id}', 'ExecutableController@create')->name('executables.create');
         
-        Route::post('{questionnaire_id}/store/{model_id}', 'ExecutableController@store')->name('executables.store');
+        Route::post('store', 'ExecutableController@store')->name('executables.store');
+
+        Route::post('start', 'ExecutableController@handleStartExecutable')->name('executables.start');
     });
 });

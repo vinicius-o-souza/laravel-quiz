@@ -13,7 +13,7 @@
 
 <!-- Is Correct Field -->
 <div class="form-group col-sm-12 col-md-6">
-    <label>Questão correta?</label>
+    <label>Alternativa correta?</label>
     <p>{!! $alternative->is_correct ? 'Sim' : 'Não' !!}</p>
 </div>
     

@@ -188,12 +188,22 @@ class QuestionnaireController extends Controller
             $input['answer_once'] = false;
         }
         
-        $inputQuestionnaire = $request->only('name', 'answer_once');
+        $inputQuestionnaire = $request->only('name', 'answer_once', 'waiting_time', 'type_waiting_time', 'execution_time', 'type_execution_time');
         
-        if (isset($input['answer_once'])) {
+        if ($input['answer_once']) {
             $inputQuestionnaire['answer_once'] = true;
         } else {
             $inputQuestionnaire['answer_once'] = false;
+        } 
+                
+        if(!isset($input['checkbox_waiting_time'])) {
+            $inputQuestionnaire['waiting_time'] = null;
+            $inputQuestionnaire['type_waiting_time'] = null;
+        }
+        
+        if(!isset($input['checkbox_execution_time'])) {
+            $inputQuestionnaire['execution_time'] = null;
+            $inputQuestionnaire['type_execution_time'] = null;
         }
         
         $questionnaire->update($inputQuestionnaire);
