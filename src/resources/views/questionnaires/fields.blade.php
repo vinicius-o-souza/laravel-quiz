@@ -28,23 +28,23 @@
         {!! Form::label('waiting_time', 'Tipo do Tempo de Espera:') !!}
         <select id="type_waiting_time" name="type_waiting_time" class="form-control select2">
             <option value="{{ config('quiz.type_time.MINUTES.id') }}"
-                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_waiting_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.MINUTES.name') }}
             </option>
             <option value="{{ config('quiz.type_time.HOURS.id') }}"
-                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.HOURS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_waiting_time == config('quiz.type_time.HOURS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.HOURS.name') }}
             </option>
             <option value="{{ config('quiz.type_time.DAYS.id') }}"
-                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.DAYS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_waiting_time == config('quiz.type_time.DAYS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.DAYS.name') }}
             </option>
             <option value="{{ config('quiz.type_time.MONTHS.id') }}"
-                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.MONTHS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_waiting_time == config('quiz.type_time.MONTHS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.MONTHS.name') }}
             </option>
             <option value="{{ config('quiz.type_time.YEARS.id') }}"
-                    {{ isset($subject) && ($subject->type_waiting_time == config('quiz.type_time.YEARS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_waiting_time == config('quiz.type_time.YEARS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.YEARS.name') }}
             </option>
         </select>
@@ -69,23 +69,23 @@
         {!! Form::label('execution_time', 'Tipo do Tempo de Espera:') !!}
         <select id="type_execution_time" name="type_execution_time" class="form-control select2">
             <option value="{{ config('quiz.type_time.MINUTES.id') }}"
-                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_execution_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.MINUTES.name') }}
             </option>
             <option value="{{ config('quiz.type_time.HOURS.id') }}"
-                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.HOURS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_execution_time == config('quiz.type_time.HOURS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.HOURS.name') }}
             </option>
             <option value="{{ config('quiz.type_time.DAYS.id') }}"
-                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.DAYS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_execution_time == config('quiz.type_time.DAYS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.DAYS.name') }}
             </option>
             <option value="{{ config('quiz.type_time.MONTHS.id') }}"
-                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.MONTHS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_execution_time == config('quiz.type_time.MONTHS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.MONTHS.name') }}
             </option>
             <option value="{{ config('quiz.type_time.YEARS.id') }}"
-                    {{ isset($subject) && ($subject->type_execution_time == config('quiz.type_time.YEARS.id')) ? 'selected': ''}}>
+                    {{ isset($questionnaire) && ($questionnaire->type_execution_time == config('quiz.type_time.YEARS.id')) ? 'selected': ''}}>
                     {{ config('quiz.type_time.YEARS.name') }}
             </option>
         </select>
@@ -259,15 +259,26 @@
             }
         });
         
+        $('#waiting_time_block').hide();
+        $('#waiting_time_block input').attr('disabled', true);
+        $('#waiting_time_block select').attr('disabled', true);   
+        $('#execution_time_block').hide();
+        $('#execution_time_block input').attr('disabled', true);
+        $('#execution_time_block select').attr('disabled', true);
+        
         if(questionnaireEdit) {
-            
-        } else {
-            $('#waiting_time_block').hide();
-            $('#waiting_time_block input').attr('disabled', true);
-            $('#waiting_time_block select').attr('disabled', true);   
-            $('#execution_time_block').hide();
-            $('#execution_time_block input').attr('disabled', true);
-            $('#execution_time_block select').attr('disabled', true);
+            if(questionnaireEdit.waiting_time) {
+                $('#checkbox_waiting_time').prop('checked', true);
+                $('#waiting_time_block').show();
+                $('#waiting_time_block input').attr('disabled', false);
+                $('#waiting_time_block select').attr('disabled', false);       
+            }
+            if(questionnaireEdit.execution_time) {
+                $('#checkbox_execution_time').prop('checked', true);
+                $('#execution_time_block').show();
+                $('#execution_time_block input').attr('disabled', false);
+                $('#execution_time_block select').attr('disabled', false);       
+            }
         }
         
         $(document).on('change', '#checkbox_waiting_time', function () {

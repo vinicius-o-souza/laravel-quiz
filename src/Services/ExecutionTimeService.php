@@ -18,12 +18,13 @@ class ExecutionTimeService
      * @var
      * @return void
      */
-    public function handleIfHasExecutableNotAnswered($questionnaireId, $modelId)
+    public function handleIfHasExecutableNotAnswered($questionnaire, $modelId)
     {
-        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
+        $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaire->id)
                                 ->where('executable_id', $modelId)
                                 ->where('executable_type', config('quiz.models.executable'))->first();
-        if (!empty($executable)) {
+        $timer = Helpers::timePlusTypeTime(Carbon::now(), $questionnaire->execution_time, $questionnaire->type_execution_time);
+        if (!empty($executable) && $timer < Carbon::now()) {
             $executable->update(['answered' => false]);
         }
     }

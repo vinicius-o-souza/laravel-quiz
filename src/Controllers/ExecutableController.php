@@ -44,7 +44,7 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
 
-        $executionTimeService->handleIfHasExecutableNotAnswered($questionnaireId, $modelId);
+        $executionTimeService->handleIfHasExecutableNotAnswered($questionnaire, $modelId);
         
         if (!$questionnaire->canExecute($modelId)) {
             flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
@@ -101,46 +101,56 @@ class ExecutableController extends Controller
         
         $sumWeight = 0;
         $sumValues = 0;
-        foreach ($input as $idQuestion => $answer) {
-            $question = Question::find($idQuestion);
-            
-            if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
-                $alternative = Alternative::find($answer);
+        if($input) {
+            foreach ($input as $idQuestion => $answer) {
+                $question = Question::find($idQuestion);
                 
-                if ($alternative->is_correct) {
-                    $score = $question->weight * $alternative->value;
-                    $sumValues += $question->weight * $alternative->value;
-                    $sumWeight += $question->weight;
+                if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+                    $alternative = Alternative::find($answer);
+                    
+                    if ($alternative->is_correct) {
+                        $score = $question->weight * $alternative->value;
+                        $sumValues += $question->weight * $alternative->value;
+                        $sumWeight += $question->weight;
+                    } else {
+                        $score = 0;
+                    }
+                    
+                    Answer::create([
+                        'executable_id'      => $executable->id,
+                        'alternative_id'    => $answer,
+                        'question_id'       => $idQuestion,
+                        'score'             => $score,
+                   ]);
                 } else {
-                    $score = 0;
+                    $sumValues = null;
+                    $sumWeight = null;
+                    Answer::create([
+                        'executable_id'      => $executable->id,
+                        'alternative_id'    => null,
+                        'question_id'       => $idQuestion,
+                        'description'       => $answer,
+                        'score'             => null
+                   ]);
                 }
-                
-                Answer::create([
-                    'executable_id'      => $executable->id,
-                    'alternative_id'    => $answer,
-                    'question_id'       => $idQuestion,
-                    'score'             => $score,
-               ]);
-            } else {
-                $sumValues = null;
-                $sumWeight = null;
-                Answer::create([
-                    'executable_id'      => $executable->id,
-                    'alternative_id'    => null,
-                    'question_id'       => $idQuestion,
-                    'description'       => $answer,
-                    'score'             => null
-               ]);
             }
-        }
-        
-        if ($sumValues && $sumWeight) {
-            $scoreTotal = $sumValues / $sumWeight;
+            
+            if ($sumValues && $sumWeight) {
+                $scoreTotal = $sumValues / $sumWeight;
+            } else {
+                $scoreTotal = 0;
+            }
             $executable->update([
                 'score'     => $scoreTotal,
                 'answered'  => true
             ]);
+        } else {
+            $executable->update([
+                'score'     => 0,
+                'answered'  => false
+            ]);
         }
+        
         
         flash('Questionário respondido com sucesso!')->success();
         
@@ -201,19 +211,11 @@ class ExecutableController extends Controller
             ]);
         }
         
-        $executable = Executable::create([
-            'executable_id'         => $input['model_id'],
-            'executable_type'       => config('quiz.models.executable'),
-            'questionnaire_id'      => $questionnaireId,
-            'score'                 => 0,
-            'answered'              => null
-        ]);
-        
         if ($questionnaire->execution_time) {
             $executionTime = $executionTimeService->startRedisCache($questionnaire, $input['model_id']);
             return response()->json([
                 'status'            => 'success',
-                'executionTime'     => 'executionTime'
+                'executionTime'     => $executionTime
             ], 200);
         }
         

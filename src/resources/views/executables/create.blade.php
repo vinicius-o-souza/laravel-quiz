@@ -91,7 +91,7 @@
                     }
                     $('#start_block').hide();
                     $('#questionnaire_form').show();
-                    if(data.status == success) {
+                    if(data.status == 'success') {
                         if(data.executionTime) {
                             timer(data.executionTime);    
                         }
