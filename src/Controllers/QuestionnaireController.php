@@ -194,8 +194,7 @@ class QuestionnaireController extends Controller
             $inputQuestionnaire['answer_once'] = true;
         } else {
             $inputQuestionnaire['answer_once'] = false;
-        }
-        
+        } 
                 
         if(!isset($input['checkbox_waiting_time'])) {
             $inputQuestionnaire['waiting_time'] = null;

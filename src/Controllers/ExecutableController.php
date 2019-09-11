@@ -46,11 +46,6 @@ class ExecutableController extends Controller
 
         $executionTimeService->handleIfHasExecutableNotAnswered($questionnaire, $modelId);
         
-        if (!$questionnaire->canExecute($modelId)) {
-            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
-            return redirect()->back();
-        }
-        
         if ($questionnaire->answer_once) {
             $executionsModel = $questionnaire->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
             $executionModelCount = $executionsModel->count();
@@ -58,6 +53,11 @@ class ExecutableController extends Controller
                 flash('Questionário só pode ser respondido uma vez!')->error();
                 return redirect(route('questionnaires.index', $parentId));
             }
+        }
+        
+        if (!$questionnaire->canExecute($modelId)) {
+            flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
+            return redirect()->back();
         }
 
         return view('pandoapps::executables.create', compact('questionnaire', 'modelId'));

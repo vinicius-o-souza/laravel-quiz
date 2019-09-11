@@ -16,7 +16,7 @@
     {!! Form::checkbox('checkbox_waiting_time', null, null, ['id' => 'checkbox_waiting_time']) !!}
 </div>
 
-<div class="row col-sm-12" id="waiting_time_block">
+<div class="row col-sm-12" id="waiting_time_block" style="display:none">
     <!-- Waiting Time Field -->
     <div class="form-group col-sm-6">
         {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
@@ -57,7 +57,7 @@
     {!! Form::checkbox('checkbox_execution_time', null, null, ['id' => 'checkbox_execution_time']) !!}
 </div>
 
-<div class="row col-sm-12" id="execution_time_block">
+<div class="row col-sm-12" id="execution_time_block" style="display:none">
     <!-- Execution Time Field -->
     <div class="form-group col-sm-6">
         {!! Form::label('execution_time', 'Tempo de Execução:') !!}
@@ -229,7 +229,7 @@
                         @{{#if is_correct }}
                             checked
                         @{{/if }}
-                    > Questão correta?
+                    > Alternativa correta?
                 </label>
             </div>
         </div>
@@ -240,7 +240,8 @@
     const questionsType = {!! json_encode(config('quiz.question_types')) !!};
     
     var questionnaire = [];
-    @if(Request::is('parent/*/questionnaires/*/edit'))
+    var questionnaireEdit = null;
+    @if(Request::is('*/questionnaires/*/edit'))
         var questionnaireEdit = {!! json_encode($questionnaire) !!};
     @endif
     
@@ -305,7 +306,7 @@
             }
         });
         
-        @if(Request::is('parent/*/questionnaires/*/edit'))
+        @if(Request::is('*/questionnaires/*/edit'))
             handleQuestionnaireEdit();
         @endif
 
