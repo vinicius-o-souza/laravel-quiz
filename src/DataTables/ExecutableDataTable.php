@@ -22,8 +22,8 @@ class ExecutableDataTable extends DataTable
         $questionnaireId = request()->questionnaire_id;
         $modelId = request()->model_id;
         
-        $executables = Executable::whereHas('questionnaire', function (Builder $query) use ($parentId) {
-            $query->where('parent_id', $parentId);
+        $executables = Executable::whereHas('questionnaire', function (Builder $query) use ($parent_id) {
+            $query->where('parent_id', $parent_id);
         });
         if ($modelId) {
             $executables->where('executable_id', $modelId);

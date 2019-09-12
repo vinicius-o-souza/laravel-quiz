@@ -2,6 +2,7 @@
 
 namespace PandoApps\Quiz;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Yajra\DataTables;
 
@@ -28,6 +29,8 @@ class QuizServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
+        
+        View::share('parentName', config('quiz.models.parent_id'));
     }
 
     /**

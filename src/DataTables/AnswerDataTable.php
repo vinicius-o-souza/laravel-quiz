@@ -21,8 +21,8 @@ class AnswerDataTable extends DataTable
         $parent_id = request()->$parentName;
         $question_id = request()->question_id;
         
-        $answers = Answer::whereHas('question.questionnaire', function (Builder $query) use ($parentId) {
-            $query->where('parent_id', $parentId);
+        $answers = Answer::whereHas('question.questionnaire', function (Builder $query) use ($parent_id) {
+            $query->where('parent_id', $parent_id);
         })->with('alternative');
         if ($question_id) {
             $answers->where('question_id', $question_id);

@@ -68,6 +68,7 @@
             var questionnaireId = $('#questionnaire_id').val();
             $.ajax({
                 url:'{!! route("executables.start", request()->$parentName) !!}',
+                type: 'POST',
                 data:{
                     "_token": "{{ csrf_token() }}",
                     questionnaire_id: questionnaireId,
