@@ -75,16 +75,16 @@ class ExecutableDataTable extends DataTable
         $modelId = request()->model_id;
         if ($modelId) {
             return [
-                'questionnaire_id'  => ['title' => \Lang::get('pandoapps::datable.columns.executables.questionnaire_id')],
-                'score'             => ['title' => \Lang::get('pandoapps::datable.columns.executables.score')],
-                'created_at'        => ['title' => \Lang::get('pandoapps::datable.columns.executables.created_at')]
+                'questionnaire_id'  => ['title' => \Lang::get('pandoapps::datatable.columns.executables.questionnaire_id')],
+                'score'             => ['title' => \Lang::get('pandoapps::datatable.columns.executables.score')],
+                'created_at'        => ['title' => \Lang::get('pandoapps::datatable.columns.executables.created_at')]
             ];
         } else {
             return [
-                'executable_id'     => ['title' => \Lang::get('pandoapps::datable.columns.executables.executable_id')],
-                'questionnaire_id'  => ['title' => \Lang::get('pandoapps::datable.columns.executables.questionnaire_id')],
-                'score'             => ['title' => \Lang::get('pandoapps::datable.columns.executables.score')],
-                'created_at'        => ['title' => \Lang::get('pandoapps::datable.columns.executables.created_at')]
+                'executable_id'     => ['title' => \Lang::get('pandoapps::datatable.columns.executables.executable_id')],
+                'questionnaire_id'  => ['title' => \Lang::get('pandoapps::datatable.columns.executables.questionnaire_id')],
+                'score'             => ['title' => \Lang::get('pandoapps::datatable.columns.executables.score')],
+                'created_at'        => ['title' => \Lang::get('pandoapps::datatable.columns.executables.created_at')]
             ];
         }
     }

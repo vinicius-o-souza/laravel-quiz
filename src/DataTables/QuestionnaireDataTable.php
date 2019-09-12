@@ -68,12 +68,12 @@ class QuestionnaireDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'name'              => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.name')],
-            'answer_once'       => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.answer_once')],
-            'is_active'         => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.is_active')],
-            'questions'         => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.questions')],
-            'execution_time'    => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.execution_time')],
-            'waiting_time'      => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.waiting_time')]
+            'name'              => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.name')],
+            'answer_once'       => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.answer_once')],
+            'is_active'         => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.is_active')],
+            'questions'         => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.questions')],
+            'execution_time'    => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.execution_time')],
+            'waiting_time'      => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.waiting_time')]
         ];
     }
 
