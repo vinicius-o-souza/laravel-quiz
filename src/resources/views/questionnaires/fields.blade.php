@@ -131,6 +131,12 @@
             </div>
             <div class="col-sm-12 col-md-10">
                 <div class="row">
+                    <!-- Description Field -->
+                    <div class="form-group col-sm-12">
+                        <label for="description">Descrição:  <span class="text-danger"> * </span></label>
+                        <textarea id="description" name="description[@{{ id }}]" class="form-control" rows="3" required>@{{ description }}</textarea>
+                    </div>
+                    
                     <!-- Question Type Field -->
                     <div class="form-group col-sm-12 col-md-6">
                         <label for="question_type_id_@{{ id }}">Tipo da Questão:</label>
@@ -144,12 +150,6 @@
                             @{{/each}}
                         </select>
                         <p class="help-block">Questões do tipo aberta não possuem alternativas.</p>
-                    </div>
-
-                    <!-- Description Field -->
-                    <div class="form-group col-sm-12 col-md-6">
-                        <label for="description">Descrição:  <span class="text-danger"> * </span></label>
-                        <input type="text" id="description" name="description[@{{ id }}]" class="form-control" value="@{{ description }}" required>
                     </div>
 
                     <!-- Hint Field -->
@@ -211,9 +211,9 @@
         </div>
         <div class="col-sm-12 col-md-9 row">
             <!-- Description Field -->
-            <div class="form-group col-sm-12 col-md-6">
+            <div class="form-group col-sm-12">
                 <label for="description">Descrição:  <span class="text-danger"> * </span></label>
-                <input type="text" id="description" name="description_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ description }}" required>
+                <textarea id="description" name="description_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" rows="2" required>@{{ description }}</textarea>
             </div>
             
             <!-- Value Field -->
@@ -371,10 +371,6 @@
             if(typeof thisIdAlternative != "string") {
                 alternativeDeleteAjax(thisIdAlternative);
             }
-        });
-        
-        $('input[required]').on('invalid', function() {
-            this.setCustomValidity('Campo de preenchimento obrigatório.');
         });
 
     });

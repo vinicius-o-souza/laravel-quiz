@@ -76,24 +76,24 @@ class QuestionDataTable extends DataTable
         $questionnaire_id = request()->questionnaire_id;
         if ($questionnaire_id) {
             return [
-                'question_type'     => ['title' => 'Tipo da Questão'],
-                'description'        => ['title' => 'Descrição'],
-                'hint'              => ['title' => 'Dica'],
-                'weight'            => ['title' => 'Peso'],
-                'is_required'       => ['title' => 'Obrigatória'],
-                'is_active'         => ['title' => 'Ativa'],
-                'alternatives'      => ['title' => 'Alternativas']
+                'question_type'     => ['title' => \Lang::get('pandoapps::datable.columns.questions.question_type')],
+                'description'       => ['title' => \Lang::get('pandoapps::datable.columns.questions.description')],
+                'hint'              => ['title' => \Lang::get('pandoapps::datable.columns.questions.hint')],
+                'weight'            => ['title' => \Lang::get('pandoapps::datable.columns.questions.weight')],
+                'is_required'       => ['title' => \Lang::get('pandoapps::datable.columns.questions.is_required')],
+                'is_active'         => ['title' => \Lang::get('pandoapps::datable.columns.questions.is_active')],
+                'alternatives'      => ['title' => \Lang::get('pandoapps::datable.columns.questions.alternatives')]
             ];
         } else {
             return [
-                'questionnaire_id'  => ['title' => 'Questionário'],
-                'question_type'     => ['title' => 'Tipo da Questão'],
-                'description'       => ['title' => 'Descrição'],
-                'hint'              => ['title' => 'Dica'],
-                'weight'            => ['title' => 'Peso'],
-                'is_required'       => ['title' => 'Obrigatória'],
-                'is_active'         => ['title' => 'Ativa'],
-                'alternatives'      => ['title' => 'Alternativas']
+                'questionnaire_id'  => ['title' => \Lang::get('pandoapps::datable.columns.questions.questionnaire_id')],
+                'question_type'     => ['title' => \Lang::get('pandoapps::datable.columns.questions.question_type')],
+                'description'       => ['title' => \Lang::get('pandoapps::datable.columns.questions.description')],
+                'hint'              => ['title' => \Lang::get('pandoapps::datable.columns.questions.hint')],
+                'weight'            => ['title' => \Lang::get('pandoapps::datable.columns.questions.weight')],
+                'is_required'       => ['title' => \Lang::get('pandoapps::datable.columns.questions.is_required')],
+                'is_active'         => ['title' => \Lang::get('pandoapps::datable.columns.questions.is_active')],
+                'alternatives'      => ['title' => \Lang::get('pandoapps::datable.columns.questions.alternatives')]
             ];
         }
     }

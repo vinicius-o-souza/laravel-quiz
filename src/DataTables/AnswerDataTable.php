@@ -64,10 +64,10 @@ class AnswerDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'question'      => ['title' => 'Questão'],
-            'alternative'   => ['title' => 'Alternativa'],
-            'description'   => ['title' => 'Resposta'],
-            'score'         => ['title' => 'Pontuação'],
+            'question'      => ['title' => \Lang::get('pandoapps::datable.columns.answers.question')],
+            'alternative'   => ['title' => \Lang::get('pandoapps::datable.columns.answers.alternative')],
+            'description'   => ['title' => \Lang::get('pandoapps::datable.columns.answers.description')],
+            'score'         => ['title' => \Lang::get('pandoapps::datable.columns.answers.score')]
         ];
     }
 

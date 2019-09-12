@@ -63,10 +63,10 @@ class AlternativeDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'question'      => ['title' => 'Questão'],
-            'description'   => ['title' => 'Descrição'],
-            'value'         => ['title' => 'Valor'],
-            'is_correct'    => ['title' => 'Correta?']
+            'question'      => ['title' => \Lang::get('pandoapps::datable.columns.alternatives.question')],
+            'description'   => ['title' => \Lang::get('pandoapps::datable.columns.alternatives.description')],
+            'value'         => ['title' => \Lang::get('pandoapps::datable.columns.alternatives.value')],
+            'is_correct'    => ['title' => \Lang::get('pandoapps::datable.columns.alternatives.is_correct')],
         ];
     }
 

@@ -27,7 +27,6 @@ class QuizServiceProvider extends ServiceProvider
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
-            $this->publishesOtherPackages();
         }
     }
 
@@ -96,25 +95,5 @@ class QuizServiceProvider extends ServiceProvider
 
         // Registering package commands.
         // $this->commands([]);
-    }
-    
-    /**
-     * Publish other required packages
-     *
-     * @return void
-     */
-    protected function publishesOtherPackages()
-    {
-        //! Laravel WebSockets Publishes
-        
-        // Publishing the config.
-        $this->publishes([
-            __DIR__."/../../BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/config/websockets.php" => config_path('websockets.php'),
-        ], 'config');
-
-        // Publishing the migrations.
-        $this->publishes([
-            __DIR__."/../../BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/database/migrations/create_websockets_statistics_entries_table.php.stub" => database_path('migrations'),
-        ], 'migrations');
     }
 }

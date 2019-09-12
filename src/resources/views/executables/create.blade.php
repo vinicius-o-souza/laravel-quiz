@@ -16,9 +16,9 @@
                 <div id="start_block" class="container text-center" style="padding: 100px 50px">
                     <button type="button" id="start_button" class="btn btn-success btn-lg" style="padding: 20px 40px">INICIAR <i class="fa fa-play"></i></button>
                 </div>
-                <div id="questionnaire_form">
+                <div id="questionnaire_form_block">
                     <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
-                    {!! Form::open(['route' => ['executables.store', request()->parent_id], 'class' => 'w-100']) !!}
+                    {!! Form::open(['route' => ['executables.store', request()->parent_id], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
                         <input id="model_id" type="hidden" name="model_id" value="{{ Auth::user()->id }}">
                         <input id="questionnaire_id" type="hidden" name="questionnaire_id" value="{{ $questionnaire->id }}">
                         <div class="row p-md-5">
@@ -55,14 +55,7 @@
     <script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}" type="text/javascript"></script> 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript">
-        $('input[required]').on('invalid', function() {
-            this.setCustomValidity('Campo de preenchimento obrigatório.');
-        });
-        $('textarea[required]').on('invalid', function() {
-            this.setCustomValidity('Campo de preenchimento obrigatório.');
-        });
-        
-        $('#questionnaire_form').hide();
+        $('#questionnaire_form_block').hide();
 
         $.ajaxSetup({
             headers: {
@@ -90,7 +83,7 @@
                         });
                     }
                     $('#start_block').hide();
-                    $('#questionnaire_form').show();
+                    $('#questionnaire_form_block').show();
                     if(data.status == 'success') {
                         if(data.executionTime) {
                             timer(data.executionTime);    
@@ -113,8 +106,9 @@
             var countDownDate = new Date(time).getTime();
             
             // Update the count down every 1 second
-            setInterval(function () {
-            
+            var myTimer = setInterval(countDown, 1000);
+            function countDown() {
+        
                 // Get today's date and time
                 var now = new Date().getTime();
                     
@@ -132,9 +126,10 @@
                     
                 // If the count down is over, write some text 
                 if (distance < 0) {
-                    $('form').submit();
+                    $('#questionnaire_form').submit();
+                    clearInterval(myTimer);
                 }
-            }, 1000);
-        }
+            }
+        }   
     </script>
 @endpush

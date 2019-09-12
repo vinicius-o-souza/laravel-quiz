@@ -17,7 +17,17 @@ return [
         /*
         *   Tipo do Modelo que pertence o questionário
         */
-        'parent_type' => App\User::class
+        'parent_type' => App\User::class,
+        
+        /*
+        *   Nome do Modelo que pertence o questionário no singular e minusculo
+        */
+        'parent_name_singular' => 'user',
+        
+        /*
+        *   Nome do Modelo que pertence o questionário no plural e minusculo
+        */
+        'parent_name_plural' => 'users',
 
     ],
 

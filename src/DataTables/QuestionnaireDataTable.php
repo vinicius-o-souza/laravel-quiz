@@ -68,12 +68,12 @@ class QuestionnaireDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'name'              => ['title' => 'Nome'],
-            'answer_once'       => ['title' => 'Resposta Única'],
-            'is_active'         => ['title' => 'Ativo'],
-            'questions'         => ['title' => 'Questões'],
-            'execution_time'    => ['title' => 'Tempo total para execução do questionário'],
-            'waiting_time'      => ['title' => 'Tempo de espera para a próxima execução']
+            'name'              => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.name')],
+            'answer_once'       => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.answer_once')],
+            'is_active'         => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.is_active')],
+            'questions'         => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.questions')],
+            'execution_time'    => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.execution_time')],
+            'waiting_time'      => ['title' => \Lang::get('pandoapps::datable.columns.questionnaire.waiting_time')]
         ];
     }
 
