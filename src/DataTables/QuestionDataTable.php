@@ -63,7 +63,7 @@ class QuestionDataTable extends DataTable
         return $this->builder()
             ->minifiedAjax()
             ->columns($this->getColumns())
-            ->addAction(['width' => '75px', 'printable' => false, 'title' => 'Opções'])
+            ->addAction(['printable' => false, 'title' => 'Opções'])
             ->parameters(DataTablesDefaults::getParameters());
     }
 
