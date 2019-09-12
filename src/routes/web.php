@@ -2,7 +2,7 @@
 
 Route::resource('question_types', 'QuestionTypeController');
 
-Route::group(['prefix' => config('quiz.models.parent_name_plural'). '/' . config('quiz.models.parent_name_singular')], function () {
+Route::group(['prefix' => config('quiz.models.parent_url_name'). '/{' . config('quiz.models.parent_id'). '}'], function () {
     Route::resource('questionnaires', 'QuestionnaireController');
 
     Route::resource('questions', 'QuestionController')->except(['create', 'store', 'update']);

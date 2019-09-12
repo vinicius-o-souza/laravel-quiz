@@ -11,7 +11,7 @@
 </div>
 
 <!-- Waiting Time Checkbox -->
-<div class="form-group col-sm-12">
+<div class="form-group col-sm-12" id="checkbox_waiting_time_block">
     {!! Form::label('checkbox_waiting_time', 'Deseja definir um tempo de espera para submeter outra resposta?') !!}
     {!! Form::checkbox('checkbox_waiting_time', null, null, ['id' => 'checkbox_waiting_time']) !!}
 </div>
@@ -66,7 +66,7 @@
     
     <!-- Type execution Time Field -->
     <div class="form-group col-sm-6">
-        {!! Form::label('execution_time', 'Tipo do Tempo de Espera:') !!}
+        {!! Form::label('execution_time', 'Tipo do Tempo de Execução:') !!}
         <select id="type_execution_time" name="type_execution_time" class="form-control select2">
             <option value="{{ config('quiz.type_time.MINUTES.id') }}"
                     {{ isset($questionnaire) && ($questionnaire->type_execution_time == config('quiz.type_time.MINUTES.id')) ? 'selected': ''}}>

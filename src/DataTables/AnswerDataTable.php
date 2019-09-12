@@ -17,7 +17,7 @@ class AnswerDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parentName = config('quiz.models.parent_name_singular');
+        $parentName = config('quiz.models.parent_id');
         $parent_id = request()->$parentName;
         $question_id = request()->question_id;
         

@@ -16,7 +16,7 @@ class QuestionnaireDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parentName = config('quiz.models.parent_name_singular');
+        $parentName = config('quiz.models.parent_id');
         $parent_id = request()->$parentName;
         
         $questionnaires = Questionnaire::where('parent_id', $parent_id)->with('executables')->get();

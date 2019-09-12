@@ -22,12 +22,12 @@ return [
         /*
         *   Nome do Modelo que pertence o questionário no singular e minusculo
         */
-        'parent_name_singular' => 'user',
+        'parent_id' => 'user_id',
         
         /*
         *   Nome do Modelo que pertence o questionário no plural e minusculo
         */
-        'parent_name_plural' => 'users',
+        'parent_url_name' => 'users',
 
     ],
 

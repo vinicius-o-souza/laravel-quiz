@@ -18,7 +18,7 @@ class ExecutableController extends Controller
 
     public function __construct()
     {
-        $this->parentName = config('quiz.models.parent_name_singular');
+        $this->parentName = config('quiz.models.parent_id');
     }
     
     /**
