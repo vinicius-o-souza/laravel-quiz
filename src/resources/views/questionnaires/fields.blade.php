@@ -112,7 +112,7 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12 pt-5">
     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('questionnaires.index', request()->config('pandoapps::models.parent_name_singular')) !!}" class="btn btn-default">Cancelar</a>
+    <a href="{!! route('questionnaires.index', request()->config('quiz.models.parent_name_singular')) !!}" class="btn btn-default">Cancelar</a>
 </div>
 
 @push('scripts_quiz')

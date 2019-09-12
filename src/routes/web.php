@@ -2,7 +2,7 @@
 
 Route::resource('question_types', 'QuestionTypeController');
 
-Route::group(['prefix' => config('pandoapps::models.parent_name_plural'). '/' . config('pandoapps::models.parent_name_singular')], function () {
+Route::group(['prefix' => config('quiz.models.parent_name_plural'). '/' . config('quiz.models.parent_name_singular')], function () {
     Route::resource('questionnaires', 'QuestionnaireController');
 
     Route::resource('questions', 'QuestionController')->except(['create', 'store', 'update']);

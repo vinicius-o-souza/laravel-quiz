@@ -16,7 +16,7 @@ class QuestionnaireDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parent_id = request()->config('pandoapps::models.parent_name_singular');
+        $parent_id = request()->config('quiz.models.parent_name_singular');
         
         $questionnaires = Questionnaire::where('parent_id', $parent_id)->with('executables')->get();
 
