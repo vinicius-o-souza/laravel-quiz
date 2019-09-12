@@ -13,6 +13,12 @@ use PandoApps\Quiz\Models\Questionnaire;
 
 class QuestionnaireController extends Controller
 {
+    private $parentName;
+
+    public function __construct()
+    {
+        $this->parentName = config('quiz.models.parent_name_singular');
+    }
 
     /**
      * Display a listing of the resource.
@@ -43,6 +49,7 @@ class QuestionnaireController extends Controller
      */
     public function store(Request $request)
     {
+        $parentName = $this->parentName;
         $input = $request->all();
 
         $questionnaireValidation = Validator::make($input, Questionnaire::$rules);
@@ -61,7 +68,7 @@ class QuestionnaireController extends Controller
         $questionnaire = Questionnaire::create([
             'name'                  => $input['name'],
             'answer_once'           => isset($input['answer_once']) ? true : false,
-            'parent_id'             => $request->config('quiz.models.parent_name_singular'),
+            'parent_id'             => $request->$parentName,
             'parent_type'           => config('quiz.models.parent_type'),
             'waiting_time'          => isset($input['waiting_time']) ? $input['waiting_time'] : null,
             'type_waiting_time'     => isset($input['type_waiting_time']) ? $input['type_waiting_time'] : null,
@@ -94,21 +101,21 @@ class QuestionnaireController extends Controller
                     } else {
                         flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
                         DB::rollback();
-                        return redirect(route('questionnaires.create', $request->config('quiz.models.parent_name_singular')));
+                        return redirect(route('questionnaires.create', $request->$parentName));
                     }
                 }
             }
         } else {
             flash('Questionário devem ter no mínimo 1 questão')->error();
             DB::rollback();
-            return redirect(route('questionnaires.create', $request->config('quiz.models.parent_name_singular')));
+            return redirect(route('questionnaires.create', $request->$parentName));
         }
         
         DB::commit();
 
         flash('Questionário criado com sucesso!')->success();
 
-        return redirect(route('questionnaires.index', $request->config('quiz.models.parent_name_singular')));
+        return redirect(route('questionnaires.index', $request->$parentName));
     }
     
     /**

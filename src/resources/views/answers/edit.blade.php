@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1 class="pull-left"> Resposta</h1>
         <h1 class="pull-right">
-            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('answers.index', request()->config('quiz.models.parent_name_singular')) !!}">Voltar</a>
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('answers.index', request()->$parentName) !!}">Voltar</a>
         </h1>
     </section>
     <div class="content">
@@ -17,7 +17,7 @@
         <div class="box box-primary">
             <div class="box-body">
                 <div class="row">
-                    {!! Form::model($answer, ['route' => ['answers.update', request()->config('quiz.models.parent_name_singular'), $answer->id], 'method' => 'patch']) !!}
+                    {!! Form::model($answer, ['route' => ['answers.update', request()->$parentName, $answer->id], 'method' => 'patch']) !!}
 
                         @include('pandoapps::answers.fields')
 

@@ -9,6 +9,12 @@ use PandoApps\Quiz\Models\Alternative;
 
 class AlternativeController extends Controller
 {
+    private $parentName;
+
+    public function __construct()
+    {
+        $this->parentName = config('quiz.models.parent_name_singular');
+    }
 
     /**
      * Display a listing of the resource.

@@ -17,7 +17,8 @@ class AnswerDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parentId = request()->config('quiz.models.parent_name_singular');
+        $parentName = config('quiz.models.parent_name_singular');
+        $parent_id = request()->$parentName;
         $question_id = request()->question_id;
         
         $answers = Answer::whereHas('question.questionnaire', function (Builder $query) use ($parentId) {

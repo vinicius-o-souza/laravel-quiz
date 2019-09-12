@@ -8,6 +8,12 @@ use PandoApps\Quiz\Models\Answer;
 
 class AnswerController extends Controller
 {
+    private $parentName;
+
+    public function __construct()
+    {
+        $this->parentName = config('quiz.models.parent_name_singular');
+    }
 
     /**
      * Display a listing of the resource.

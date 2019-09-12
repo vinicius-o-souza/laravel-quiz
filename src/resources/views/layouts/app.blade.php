@@ -15,6 +15,7 @@
 @endsection
 
 @section('content')
+    <?php $parentName = config('quiz.models.parent_name_singular');?>
     @yield('content_pandoapps')
 @endsection
 

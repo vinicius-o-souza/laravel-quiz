@@ -16,7 +16,8 @@ class QuestionnaireDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parent_id = request()->config('quiz.models.parent_name_singular');
+        $parentName = config('quiz.models.parent_name_singular');
+        $parent_id = request()->$parentName;
         
         $questionnaires = Questionnaire::where('parent_id', $parent_id)->with('executables')->get();
 
@@ -68,12 +69,12 @@ class QuestionnaireDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'name'              => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.name')],
-            'answer_once'       => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.answer_once')],
-            'is_active'         => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.is_active')],
-            'questions'         => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.questions')],
-            'execution_time'    => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.execution_time')],
-            'waiting_time'      => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaire.waiting_time')]
+            'name'              => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaires.name')],
+            'answer_once'       => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaires.answer_once')],
+            'is_active'         => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaires.is_active')],
+            'questions'         => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaires.questions')],
+            'execution_time'    => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaires.execution_time')],
+            'waiting_time'      => ['title' => \Lang::get('pandoapps::datatable.columns.questionnaires.waiting_time')]
         ];
     }
 

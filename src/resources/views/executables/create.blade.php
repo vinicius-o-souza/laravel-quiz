@@ -18,7 +18,7 @@
                 </div>
                 <div id="questionnaire_form_block">
                     <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
-                    {!! Form::open(['route' => ['executables.store', request()->config('quiz.models.parent_name_singular')], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
+                    {!! Form::open(['route' => ['executables.store', request()->$parentName], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
                         <input id="model_id" type="hidden" name="model_id" value="{{ Auth::user()->id }}">
                         <input id="questionnaire_id" type="hidden" name="questionnaire_id" value="{{ $questionnaire->id }}">
                         <div class="row p-md-5">
@@ -41,7 +41,7 @@
                             <!-- Submit Field -->
                             <div class="form-group col-sm-12 pt-5">
                                 {!! Form::submit('Responder', ['class' => 'btn btn-primary']) !!}
-                                <a href="{!! route('executables.index', ['parent_id' => request()->config('quiz.models.parent_name_singular'), 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
+                                <a href="{!! route('executables.index', ['parent_id' => request()->$parentName, 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
                             </div>
                         </div>
                     {!! Form::close() !!}
@@ -67,7 +67,7 @@
             var modelId = $('#model_id').val();
             var questionnaireId = $('#questionnaire_id').val();
             $.ajax({
-                url:'{!! route("executables.start", request()->config('quiz.models.parent_name_singular')) !!}',
+                url:'{!! route("executables.start", request()->$parentName) !!}',
                 data:{
                     "_token": "{{ csrf_token() }}",
                     questionnaire_id: questionnaireId,

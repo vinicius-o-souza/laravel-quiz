@@ -17,7 +17,8 @@ class ExecutableDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parentId = request()->config('quiz.models.parent_name_singular');
+        $parentName = config('quiz.models.parent_name_singular');
+        $parent_id = request()->$parentName;
         $questionnaireId = request()->questionnaire_id;
         $modelId = request()->model_id;
         
