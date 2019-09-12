@@ -17,7 +17,7 @@ class AnswerDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parentId = request()->parent_id;
+        $parentId = request()->config('pandoapps::models.parent_name_singular');
         $question_id = request()->question_id;
         
         $answers = Answer::whereHas('question.questionnaire', function (Builder $query) use ($parentId) {

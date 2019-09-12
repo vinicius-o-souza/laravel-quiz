@@ -17,7 +17,7 @@ class QuestionDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parent_id = request()->parent_id;
+        $parent_id = request()->config('pandoapps::models.parent_name_singular');
         $questionnaire_id = request()->questionnaire_id;
         
         if ($questionnaire_id) {

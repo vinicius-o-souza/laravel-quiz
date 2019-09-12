@@ -57,7 +57,7 @@ class ExecutableController extends Controller
         
         if (!$questionnaire->canExecute($modelId)) {
             flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
 
         return view('pandoapps::executables.create', compact('questionnaire', 'modelId'));
@@ -81,12 +81,12 @@ class ExecutableController extends Controller
         
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $request->config('pandoapps::models.parent_name_singular'), 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
         
         if (!$questionnaire->canExecute($modelId)) {
             flash('Questionário pode ser respondido novamente '. $questionnaire->timeToExecuteAgain($modelId) .'!')->error();
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $request->config('pandoapps::models.parent_name_singular'), 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
         
         $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)
@@ -95,7 +95,7 @@ class ExecutableController extends Controller
 
         if (empty($executable)) {
             flash('Ocorreu um erro ao tentar submeter o questionário!')->error();
-            return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
+            return redirect(route('executables.index', ['parent_id' => $request->config('pandoapps::models.parent_name_singular'), 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
         
         $sumWeight = 0;
@@ -154,7 +154,7 @@ class ExecutableController extends Controller
         
         flash('Questionário respondido com sucesso!')->success();
         
-        return redirect(route('executables.index', ['parent_id' => $request->parent_id, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
+        return redirect(route('executables.index', ['parent_id' => $request->config('pandoapps::models.parent_name_singular'), 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
     }
 
     /**
@@ -194,7 +194,7 @@ class ExecutableController extends Controller
         
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-            return redirect(route('executables.index', ['parent_id' => $parentId, 'questionnaire_id' => $questionnaireId, 'model_id' => $input['model_id']]));
+            return redirect(route('executables.index', ['parent_id' => $request->config('pandoapps::models.parent_name_singular'), 'questionnaire_id' => $questionnaireId, 'model_id' => $input['model_id']]));
         }
         
         $executable = Executable::whereNull('answered')->where('questionnaire_id', $questionnaireId)

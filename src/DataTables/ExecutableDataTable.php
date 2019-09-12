@@ -17,7 +17,7 @@ class ExecutableDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parentId = request()->parent_id;
+        $parentId = request()->config('pandoapps::models.parent_name_singular');
         $questionnaireId = request()->questionnaire_id;
         $modelId = request()->model_id;
         

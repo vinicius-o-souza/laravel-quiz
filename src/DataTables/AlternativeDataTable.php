@@ -17,7 +17,7 @@ class AlternativeDataTable extends DataTable
      */
     public function dataTable()
     {
-        $parent_id = request()->parent_id;
+        $parent_id = request()->config('pandoapps::models.parent_name_singular');
         $question_id = request()->question_id;
         
         if ($question_id) {
