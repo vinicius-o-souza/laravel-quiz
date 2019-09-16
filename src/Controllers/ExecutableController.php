@@ -107,6 +107,7 @@ class ExecutableController extends Controller
         }
         
         $sumValues = 0;
+        $sumWeight = 0;
         if($input) {
             foreach ($input as $idQuestion => $answer) {
                 $question = Question::find($idQuestion);
@@ -120,6 +121,7 @@ class ExecutableController extends Controller
                     } else {
                         $score = 0;
                     }
+                    $sumWeight += $question->weight;
                     
                     Answer::create([
                         'executable_id'      => $executable->id,
@@ -140,7 +142,7 @@ class ExecutableController extends Controller
             }
             
             if ($sumValues) {
-                $scoreTotal = $sumValues;
+                $scoreTotal = $sumValues / $sumWeight;
             } else {
                 $scoreTotal = 0;
             }
