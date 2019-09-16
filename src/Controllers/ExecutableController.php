@@ -43,7 +43,7 @@ class ExecutableController extends Controller
     public function create($parentId, $questionnaireId, $modelId, ExecutionTimeService $executionTimeService)
     {
         $questionnaire = Questionnaire::with(['questions' => function ($query) {
-            $query->where('is_active', 1);
+            $query->where('is_active', 1)->orderByRaw('RAND()');
         }, 'questions.alternatives'])->find($questionnaireId);
         
         if (empty($questionnaire)) {
@@ -106,7 +106,6 @@ class ExecutableController extends Controller
             return redirect(route('executables.index', ['parent_id' => $request->$parentName, 'questionnaire_id' => $questionnaireId, 'model_id' => $modelId]));
         }
         
-        $sumWeight = 0;
         $sumValues = 0;
         if($input) {
             foreach ($input as $idQuestion => $answer) {
@@ -118,7 +117,6 @@ class ExecutableController extends Controller
                     if ($alternative->is_correct) {
                         $score = $question->weight * $alternative->value;
                         $sumValues += $question->weight * $alternative->value;
-                        $sumWeight += $question->weight;
                     } else {
                         $score = 0;
                     }
@@ -131,7 +129,6 @@ class ExecutableController extends Controller
                    ]);
                 } else {
                     $sumValues = null;
-                    $sumWeight = null;
                     Answer::create([
                         'executable_id'      => $executable->id,
                         'alternative_id'    => null,
@@ -142,8 +139,8 @@ class ExecutableController extends Controller
                 }
             }
             
-            if ($sumValues && $sumWeight) {
-                $scoreTotal = $sumValues / $sumWeight;
+            if ($sumValues) {
+                $scoreTotal = $sumValues;
             } else {
                 $scoreTotal = 0;
             }

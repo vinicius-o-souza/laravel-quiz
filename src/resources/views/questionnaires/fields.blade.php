@@ -219,7 +219,7 @@
             <!-- Value Field -->
             <div class="form-group col-sm-12 col-md-6">
                 <label for="value">Nota da alternativa:  <span class="text-danger"> * </span></label>
-                <input type="number" id="value" name="value_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ value }}" required>
+                <input type="number" id="value" name="value_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ value }}" min='0' max='10' required>
             </div>
             
             <!-- Is Correct Field -->
