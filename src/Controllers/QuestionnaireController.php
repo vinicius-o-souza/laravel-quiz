@@ -91,12 +91,19 @@ class QuestionnaireController extends Controller
                 if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
                     if ($input['countAlternatives'][$keyQuestion] > 0) {
                         foreach (array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
-                            Alternative::create([
-                                'description'   => $input['description_alternative'][$keyQuestion][$keyAlternative],
-                                'value'         => $input['value_alternative'][$keyQuestion][$keyAlternative],
-                                'is_correct'    => isset($input['is_correct'][$keyQuestion][$keyAlternative]) ? true : false,
-                                'question_id'   => $question->id,
-                            ]);
+                            $value = $input['value_alternative'][$keyQuestion][$keyAlternative];
+                            if ($value < 0 || $value > 10) {
+                                flash('Valor das alternativas deve ser no mínimo 0 ou no máximo 10')->error();        
+                                DB::rollback();
+                                return redirect(route('questionnaires.create', $request->$parentName));
+                            } else {
+                                Alternative::create([
+                                    'description'   => $input['description_alternative'][$keyQuestion][$keyAlternative],
+                                    'value'         => $input['value_alternative'][$keyQuestion][$keyAlternative],
+                                    'is_correct'    => isset($input['is_correct'][$keyQuestion][$keyAlternative]) ? true : false,
+                                    'question_id'   => $question->id,
+                                ]);   
+                            }
                         }
                     } else {
                         flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
