@@ -61,6 +61,21 @@ class ExecutionTimeService
         return Redis::get($redisKey);
     }
     
+    /**
+     * Delete the redis key of questionnaire
+     *
+     * @var Questionnaire
+     * @var
+     * @return void
+     */
+    public function deleteRedisKey($questionnaire, $modelId)
+    {
+        $redisKey = 'timer:'. $questionnaire->id .':' . $modelId;
+        if (Redis::get($redisKey)) {
+            Redis::del($redisKey);    
+        }
+    }
+    
     private function ttl($time, $typeTime)
     {
         switch ($typeTime) {

@@ -2,6 +2,7 @@
 
 namespace PandoApps\Quiz;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Yajra\DataTables;
 
@@ -27,8 +28,10 @@ class QuizServiceProvider extends ServiceProvider
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
-            $this->publishesOtherPackages();
         }
+        
+        View::share('parentName', config('quiz.models.parent_url_name'));
+        View::share('parentId', config('quiz.models.parent_id'));
     }
 
     /**
@@ -44,6 +47,21 @@ class QuizServiceProvider extends ServiceProvider
         $this->app->singleton('quiz', function ($app) {
             return new Quiz(new DataTables);
         });
+        
+        $models = [
+            'AlternativeDataTable',
+            'AnswerDataTable',
+            'ExecutableDataTable',
+            'QuestionDataTable',
+            'QuestionnaireDataTable'
+        ];
+        
+        foreach ($models as $model) {
+            $dataTableInterface = 'PandoApps\\Quiz\\DataTables\\' . $model .'Interface';
+            $dataTable = 'App\\DataTables\\' . $model;
+            $this->app->bind($dataTableInterface, $dataTable);
+        }
+
     }
 
     /**
@@ -96,25 +114,5 @@ class QuizServiceProvider extends ServiceProvider
 
         // Registering package commands.
         // $this->commands([]);
-    }
-    
-    /**
-     * Publish other required packages
-     *
-     * @return void
-     */
-    protected function publishesOtherPackages()
-    {
-        //! Laravel WebSockets Publishes
-        
-        // Publishing the config.
-        $this->publishes([
-            __DIR__."/../../BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/config/websockets.php" => config_path('websockets.php'),
-        ], 'config');
-
-        // Publishing the migrations.
-        $this->publishes([
-            __DIR__."/../../BeyondCode/LaravelWebSockets/WebSocketsServiceProvider/database/migrations/create_websockets_statistics_entries_table.php.stub" => database_path('migrations'),
-        ], 'migrations');
     }
 }

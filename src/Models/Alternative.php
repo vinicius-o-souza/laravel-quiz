@@ -25,6 +25,28 @@ class Alternative extends Model
         'value',
         'is_correct'
     ];
+    
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id'          => 'integer',
+        'description' => 'string',
+        'value'       => 'float',
+        'is_correct'  => 'boolean'
+    ];
+    
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rules = [
+        'description'       => 'required',
+        'value'             => 'required|min:0|max:10',
+    ];
 
     /**
      * Get the question of the alternative.

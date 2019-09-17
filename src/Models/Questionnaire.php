@@ -104,7 +104,7 @@ class Questionnaire extends Model
      */
     public function canExecute($modelId)
     {
-        $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
+        $executionsModel = $this->executables()->whereNotNull('answered')->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         if (!$executionsModel->isEmpty() && isset($this->type_waiting_time)) {
             $lastExecution = $executionsModel->first();
             $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $this->waiting_time, $this->type_waiting_time);
@@ -123,7 +123,7 @@ class Questionnaire extends Model
      */
     public function timeToExecuteAgain($modelId)
     {
-        $executionsModel = $this->executables()->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
+        $executionsModel = $this->executables()->whereNotNull('answered')->where('executable_id', $modelId)->orderBy('pivot_created_at', 'desc')->get();
         if (!$this->canExecute($modelId)) {
             $lastExecution = $executionsModel->first();
             $createAtPlusWaitingTime = Helpers::timePlusTypeTime($lastExecution->pivot->created_at, $this->waiting_time, $this->type_waiting_time);

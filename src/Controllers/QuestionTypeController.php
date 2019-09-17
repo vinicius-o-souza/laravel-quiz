@@ -9,6 +9,12 @@ use PandoApps\Quiz\Models\QuestionType;
 
 class QuestionTypeController extends Controller
 {
+    private $parentName;
+
+    public function __construct()
+    {
+        $this->parentName = config('quiz.models.parent_id');
+    }
 
     /**
      * Retorna todos os questionários cadastrados
