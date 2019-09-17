@@ -3,90 +3,46 @@
 namespace PandoApps\Quiz\Controllers;
 
 use Illuminate\Routing\Controller;
-use PandoApps\Quiz\DataTables\AnswerDataTable;
+use PandoApps\Quiz\DataTables\AnswerDataTableInterface;
 use PandoApps\Quiz\Models\Answer;
 
 class AnswerController extends Controller
 {
-    private $parentName;
+    private $answerDataTableInterface;
+    private $params;
 
-    public function __construct()
+    public function __construct(AnswerDataTableInterface $answerDataTableInterface)
     {
-        $this->parentName = config('quiz.models.parent_id');
+        $this->answerDataTableInterface = $answerDataTableInterface;
+        $this->params = \Route::getCurrentRoute()->parameters();
+        unset($this->params['answer_id']);
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param AnswerDataTable $answerDataTable
      * @return \Illuminate\Http\Response
      */
-    public function index(AnswerDataTable $answerDataTable)
+    public function index()
     {
-        return $answerDataTable->render('pandoapps::answers.index');
+        return $this->answerDataTableInterface->render('pandoapps::answers.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $parentId
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($parentId, $id)
+    public function show()
     {
+        $id = request()->answer_id;
         $answer = Answer::find($id);
 
         if (empty($answer)) {
             flash('Resposta não encontrada!')->error();
-
-            return redirect(route('answers.index', $parentId));
+            return redirect(route('answers.index', $this->params));
         }
 
         return view('pandoapps::answers.show', compact('answer'));
-    }
-    
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $parentId
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($parentId, $id)
-    {
-        $answer = Answer::find($id);
-
-        if (empty($answer)) {
-            flash('Resposta não encontrada!')->error();
-
-            return redirect(route('answers.index', $parentId));
-        }
-
-        return view('pandoapps::answers.edit', compact('answer'));
-    }
-    
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $parentId
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($parentId, $id)
-    {
-        $answer = Answer::find($id);
-
-        if (empty($answer)) {
-            flash('Resposta não encontrada!')->error();
-
-            return redirect(route('answers.index', $parentId));
-        }
-
-        $answer->delete();
-
-        flash('Resposta deletada com sucesso!')->success();
-
-        return redirect(route('answers.index', $parentId));
     }
 }

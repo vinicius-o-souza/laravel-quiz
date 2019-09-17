@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1 class="pull-left"> Alternativas</h1>
         <h1 class="pull-right">
-            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('alternatives.index',  request()->$parentName) !!}">Voltar</a>
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('alternatives.index',  request()->$parentId) !!}">Voltar</a>
         </h1>
     </section>
     <div class="content">
@@ -18,7 +18,7 @@
 
             <div class="box-body">
                 <div class="row">
-                    {!! Form::open(['route' => ['alternatives.store', request()->$parentName], 'class' => 'w-100']) !!}
+                    {!! Form::open(['route' => ['alternatives.store', request()->$parentId], 'class' => 'w-100']) !!}
 
                         @include('pandoapps::alternatives.fields')
 

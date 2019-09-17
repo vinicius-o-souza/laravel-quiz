@@ -3,6 +3,9 @@
 @section('content_pandoapps')
     <section class="content-header">
         <h1 class="pull-left"> {{ $questionnaire->name }} </h1>
+        <h1 class="pull-right">
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('questionnaires.index', request()->$parentId) !!}">Voltar</a>
+        </h1>
     </section>
     <div class="content">
         <div class="clearfix"></div>
@@ -18,7 +21,7 @@
                 </div>
                 <div id="questionnaire_form_block">
                     <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
-                    {!! Form::open(['route' => ['executables.store', request()->$parentName], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
+                    {!! Form::open(['route' => ['executables.store', request()->$parentId], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
                         <input id="model_id" type="hidden" name="model_id" value="{{ Auth::user()->id }}">
                         <input id="questionnaire_id" type="hidden" name="questionnaire_id" value="{{ $questionnaire->id }}">
                         <div class="row p-md-5">
@@ -41,7 +44,7 @@
                             <!-- Submit Field -->
                             <div class="form-group col-sm-12 pt-5">
                                 {!! Form::submit('Responder', ['class' => 'btn btn-primary']) !!}
-                                <a href="{!! route('executables.index', ['parent_id' => request()->$parentName, 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
+                                <a href="{!! route('executables.index', ['parent_id' => request()->$parentId, 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
                             </div>
                         </div>
                     {!! Form::close() !!}
@@ -67,7 +70,7 @@
             var modelId = $('#model_id').val();
             var questionnaireId = $('#questionnaire_id').val();
             $.ajax({
-                url:'{!! route("executables.start", request()->$parentName) !!}',
+                url:'{!! route("executables.start", request()->$parentId) !!}',
                 type: 'POST',
                 data:{
                     "_token": "{{ csrf_token() }}",
@@ -78,17 +81,18 @@
                     if(data.status == 'error') {
                         swal({
                             title: "Atenção!", 
-                            text: "Você já iniciou uma execução dessa prova, só será permitido uma submissão por vez!", 
+                            text: data.msg, 
                             icon: "warning",
                             dangerMode: true,
                         });
-                    }
-                    $('#start_block').hide();
-                    $('#questionnaire_form_block').show();
-                    if(data.status == 'success') {
-                        if(data.executionTime) {
-                            timer(data.executionTime);    
-                        }
+                    } else {
+                        $('#start_block').hide();
+                        $('#questionnaire_form_block').show();
+                        if(data.status == 'success') {
+                            if(data.executionTime) {
+                                timer(data.executionTime);    
+                            }
+                        }   
                     }
                 },
                 error: function(data) {

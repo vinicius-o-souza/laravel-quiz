@@ -1,9 +1,3 @@
-<!-- Question Type Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('question_type_id', 'Tipo da Questão:') !!}
-    {!! Form::select('question_type_id', ['' => 'Selecione um tipo de questão'] + $questionsType, null, ['class' => 'form-control']) !!}
-</div>
-
 <!-- Description Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('decription', 'Descrição:') !!}
@@ -37,5 +31,5 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('questions.index', request()->$parentName) !!}" class="btn btn-default">Cancelar</a>
+    <a href="{!! route('questions.index', request()->$parentId) !!}" class="btn btn-default">Cancelar</a>
 </div>

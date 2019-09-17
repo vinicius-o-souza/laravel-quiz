@@ -30,7 +30,8 @@ class QuizServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
         
-        View::share('parentName', config('quiz.models.parent_id'));
+        View::share('parentName', config('quiz.models.parent_url_name'));
+        View::share('parentId', config('quiz.models.parent_id'));
     }
 
     /**
@@ -46,6 +47,21 @@ class QuizServiceProvider extends ServiceProvider
         $this->app->singleton('quiz', function ($app) {
             return new Quiz(new DataTables);
         });
+        
+        $models = [
+            'AlternativeDataTable',
+            'AnswerDataTable',
+            'ExecutableDataTable',
+            'QuestionDataTable',
+            'QuestionnaireDataTable'
+        ];
+        
+        foreach ($models as $model) {
+            $dataTableInterface = 'PandoApps\\Quiz\\DataTables\\' . $model .'Interface';
+            $dataTable = 'App\\DataTables\\' . $model;
+            $this->app->bind($dataTableInterface, $dataTable);
+        }
+
     }
 
     /**

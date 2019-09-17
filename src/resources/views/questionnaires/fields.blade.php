@@ -112,7 +112,7 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12 pt-5">
     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('questionnaires.index', request()->$parentName) !!}" class="btn btn-default">Cancelar</a>
+    <a href="{!! route('questionnaires.index', request()->$parentId) !!}" class="btn btn-default">Cancelar</a>
 </div>
 
 @push('scripts_quiz')
@@ -216,22 +216,23 @@
                 <textarea id="description" name="description_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" rows="2" required>@{{ description }}</textarea>
             </div>
             
-            <!-- Value Field -->
-            <div class="form-group col-sm-12 col-md-6">
-                <label for="value">Nota da alternativa:  <span class="text-danger"> * </span></label>
-                <input type="number" id="value" name="value_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ value }}" min='0' max='10' required>
-            </div>
-            
             <!-- Is Correct Field -->
             <div class="col-sm-12 col-md-6 d-flex align-items-center">
                 <label>
-                    <input type="checkbox" name="is_correct[@{{ idQuestion }}][@{{ id }}]"
+                    <input class="is_correct" type="checkbox" name="is_correct[@{{ idQuestion }}][@{{ id }}]" data-id="@{{ id }}" data-id-question="@{{ idQuestion }}"
                         @{{#if is_correct }}
                             checked
                         @{{/if }}
                     > Alternativa correta?
                 </label>
             </div>
+            
+            <!-- Value Field -->
+            <div class="form-group col-sm-12 col-md-6" id="alternative_value_@{{ idQuestion }}_@{{ id }}">
+                <label for="value">Nota da alternativa:  <span class="text-danger"> * </span></label>
+                <input type="number" id="value" name="value_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ value }}" min='0' max='10' required>
+            </div>
+            
         </div>
     </div>
 </script>
@@ -306,6 +307,16 @@
             }
         });
         
+        $(document).on('change', '.is_correct', function () {
+            var id = $(this).data('id');
+            var idQuestion = $(this).data('id-question');
+            if($(this).prop('checked')) {
+                $('#alternative_value_'+ idQuestion + '_' + id).show();
+            } else {
+                $('#alternative_value_'+ idQuestion + '_' + id).hide();
+            }
+        });
+        
         @if(Request::is('*/questionnaires/*/edit'))
             handleQuestionnaireEdit();
         @endif
@@ -348,7 +359,7 @@
             
             $('#countQuestion').val(countQuestion);
             
-            if(typeof thisIdAlternative != "string") {
+            if(typeof thisIdQuestion != "string") {
                 questionDeleteAjax(thisIdQuestion);
             }
             
@@ -433,12 +444,18 @@
             }
         });
         
+        if (is_correct) {
+            $('#alternative_value_'+ idQuestion + '_' + idAlternative).show();
+        } else {
+            $('#alternative_value_'+ idQuestion + '_' + idAlternative).hide();
+        }
+        
         $('#countAlternatives_' + idQuestion).val(countAlternative);
     }
     
     function questionDeleteAjax(id) {
         $.ajax({
-            url: '/questions/' + id,
+            url: '/{{ $parentName }}/{{ request()->$parentId }}/questions/' + id,
             type: 'POST',
             datatype: 'json',
             data: {
@@ -447,6 +464,10 @@
                 id: id,
             },
             success: function(response){
+                alert("Questão deletada com suceso!");
+            },
+            error: function(response) {
+                alert("Não foi possível deletar a questão. Tente novamente mais tarde.");
             },
             fail: function(response) {
                 alert("Não foi possível deletar a questão. Tente novamente mais tarde.");
@@ -465,6 +486,10 @@
                 id: id,
             },
             success: function(response){
+                alert("Alternativa deletada com suceso!");
+            },
+            error: function(response) {
+                alert("Não foi possível deletar a alternativa. Tente novamente mais tarde.");
             },
             fail: function(response) {
                 alert("Não foi possível deletar a alternativa. Tente novamente mais tarde.");

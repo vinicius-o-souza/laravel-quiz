@@ -6,29 +6,31 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
-use PandoApps\Quiz\DataTables\QuestionnaireDataTable;
+use PandoApps\Quiz\DataTables\QuestionnaireDataTableInterface;
 use PandoApps\Quiz\Models\Alternative;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Models\Questionnaire;
 
 class QuestionnaireController extends Controller
 {
-    private $parentName;
+    private $questionnaireDataTableInterface;
+    private $params;
 
-    public function __construct()
+    public function __construct(QuestionnaireDataTableInterface $questionnaireDataTableInterface)
     {
-        $this->parentName = config('quiz.models.parent_id');
+        $this->questionnaireDataTableInterface = $questionnaireDataTableInterface;
+        $this->params = \Route::getCurrentRoute()->parameters();
+        unset($this->params['questionnaire_id']);
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param QuestionnaireDataTable $questionnaireDataTable
      * @return \Illuminate\Http\Response
      */
-    public function index(QuestionnaireDataTable $questionnaireDataTable)
+    public function index()
     {
-        return $questionnaireDataTable->render('pandoapps::questionnaires.index');
+        return $this->questionnaireDataTableInterface->render('pandoapps::questionnaires.index');
     }
 
     /**
@@ -49,7 +51,7 @@ class QuestionnaireController extends Controller
      */
     public function store(Request $request)
     {
-        $parentName = $this->parentName;
+        $parentId = config('quiz.models.parent_id');
         $input = $request->all();
 
         $questionnaireValidation = Validator::make($input, Questionnaire::$rules);
@@ -60,7 +62,7 @@ class QuestionnaireController extends Controller
                 $msg .= $message . '<br>';
             }
             flash($msg)->error();
-            return redirect()->back()->withInput();
+            return redirect(route('questionnaires.index', $this->params));
         }
         
         DB::beginTransaction();
@@ -68,7 +70,7 @@ class QuestionnaireController extends Controller
         $questionnaire = Questionnaire::create([
             'name'                  => $input['name'],
             'answer_once'           => isset($input['answer_once']) ? true : false,
-            'parent_id'             => $request->$parentName,
+            'parent_id'             => $request->$parentId,
             'parent_type'           => config('quiz.models.parent_type'),
             'waiting_time'          => isset($input['waiting_time']) ? $input['waiting_time'] : null,
             'type_waiting_time'     => isset($input['type_waiting_time']) ? $input['type_waiting_time'] : null,
@@ -95,12 +97,16 @@ class QuestionnaireController extends Controller
                             if ($value < 0 || $value > 10) {
                                 flash('Valor das alternativas deve ser no mínimo 0 ou no máximo 10')->error();        
                                 DB::rollback();
-                                return redirect(route('questionnaires.create', $request->$parentName));
+                                return redirect(route('questionnaires.create', $this->params));
                             } else {
+                                $is_correct = isset($input['is_correct'][$keyQuestion][$keyAlternative]);
+                                if(!$is_correct) {
+                                    $value = 0;
+                                }
                                 Alternative::create([
                                     'description'   => $input['description_alternative'][$keyQuestion][$keyAlternative],
                                     'value'         => $value,
-                                    'is_correct'    => isset($input['is_correct'][$keyQuestion][$keyAlternative]) ? true : false,
+                                    'is_correct'    => $is_correct ? true : false,
                                     'question_id'   => $question->id,
                                 ]);   
                             }
@@ -108,38 +114,33 @@ class QuestionnaireController extends Controller
                     } else {
                         flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
                         DB::rollback();
-                        return redirect(route('questionnaires.create', $request->$parentName));
+                        return redirect(route('questionnaires.create', $this->params));
                     }
                 }
             }
         } else {
             flash('Questionário devem ter no mínimo 1 questão')->error();
             DB::rollback();
-            return redirect(route('questionnaires.create', $request->$parentName));
+            return redirect(route('questionnaires.create', $this->params));
         }
-        
         DB::commit();
-
         flash('Questionário criado com sucesso!')->success();
-
-        return redirect(route('questionnaires.index', $request->$parentName));
+        return redirect(route('questionnaires.index', $this->params));
     }
     
     /**
      * Display the specified resource.
      *
-     * @param  int  $parentId
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($parentId, $id)
+    public function show()
     {
+        $id = request()->questionnaire_id;
         $questionnaire = Questionnaire::find($id);
 
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-
-            return redirect(route('questionnaires.index', $parentId));
+            return redirect(route('questionnaires.index', $this->params));
         }
 
         return view('pandoapps::questionnaires.show', compact('questionnaire'));
@@ -148,18 +149,16 @@ class QuestionnaireController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $parentId
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($parentId, $id)
+    public function edit()
     {
+        $id = request()->questionnaire_id;
         $questionnaire = Questionnaire::with('questions')->with('questions.alternatives')->find($id);
 
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-
-            return redirect(route('questionnaires.index', $parentId));
+            return redirect(route('questionnaires.index', $this->params));
         }
 
         return view('pandoapps::questionnaires.edit', compact('questionnaire'));
@@ -168,19 +167,17 @@ class QuestionnaireController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $parentId
-     * @param  int  $id
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update($parentId, $id, Request $request)
+    public function update(Request $request)
     {
+        $id = $request->questionnaire_id;
         $questionnaire = Questionnaire::find($id);
 
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-
-            return redirect(route('questionnaires.index', $parentId));
+            return redirect(route('questionnaires.index', $this->params));
         }
 
         $input = $request->all();
@@ -193,7 +190,7 @@ class QuestionnaireController extends Controller
                 $msg .= $message . '<br>';
             }
             flash($msg)->error();
-            return redirect()->back()->withInput();
+            return redirect(route('questionnaires.index', $this->params));
         }
 
         if (isset($input['answer_once'])) {
@@ -245,8 +242,12 @@ class QuestionnaireController extends Controller
                         if ($value < 0 || $value > 10) {
                             flash('Valor das alternativas deve ser no mínimo 0 ou no máximo 10')->error();        
                             DB::rollback();
-                            return redirect(route('questionnaires.create', $request->$parentName));
+                            return redirect(route('questionnaires.create', $this->params));
                         } else {
+                            $is_correct = isset($input['is_correct'][$keyQuestion][$keyAlternative]);
+                            if(!$is_correct) {
+                                $value = 0;
+                            }
                             Alternative::updateOrCreate(
                                 [
                                     'id'            => $keyAlternative,
@@ -255,7 +256,7 @@ class QuestionnaireController extends Controller
                                 [
                                     'description'   => $input['description_alternative'][$keyQuestion][$keyAlternative],
                                     'value'         => $value,
-                                    'is_correct'    => isset($input['is_correct'][$keyQuestion][$keyAlternative]) ? true : false,
+                                    'is_correct'    => $is_correct ? true : false,
                                 ]
                             );
                         }
@@ -263,37 +264,31 @@ class QuestionnaireController extends Controller
                 } else {
                     flash('Questões fechadas devem ter no mínimo 1 alternativa')->error();
                     DB::rollback();
-                    return redirect(route('questionnaires.create', $parentId));
+                    return redirect(route('questionnaires.create', $this->params));
                 }
             }
         }
-
         flash('Questionário atualizado com sucesso!')->success();
-
-        return redirect(route('questionnaires.index', $parentId));
+        return redirect(route('questionnaires.index', $this->params));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $parentId
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($parentId, $id)
+    public function destroy()
     {
+        $id = request()->questionnaire_id;
         $questionnaire = Questionnaire::find($id);
 
         if (empty($questionnaire)) {
             flash('Questionário não encontrado!')->error();
-
-            return redirect(route('questionnaires.index', $parentId));
+            return redirect(route('questionnaires.index', $this->params));
         }
-
         $questionnaire->delete();
-
         flash('Questionário deletado com sucesso!')->success();
-
-        return redirect(route('questionnaires.index', $parentId));
+        return redirect(route('questionnaires.index', $this->params));
     }
 }

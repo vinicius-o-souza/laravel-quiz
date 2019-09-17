@@ -14,22 +14,15 @@ Route::group(['prefix' => config('quiz.models.parent_url_name'). '/{' . config('
     
     Route::group(['prefix' => 'alternatives'], function () {
         Route::get('/',                                        ['as'=>'alternatives.index',   'uses'=>'AlternativeController@index']);
-        //Route::get('/create',                                  ['as'=>'alternatives.create',  'uses'=>'AlternativeController@create']);
-        //Route::post('/',                                       ['as'=>'alternatives.store',   'uses'=>'AlternativeController@store']);
         Route::get('/{alternative_id}',                        ['as'=>'alternatives.show',    'uses'=>'AlternativeController@show']);
-        //Route::match(['put', 'patch'], '/{alternative_id}',    ['as'=>'alternatives.update',  'uses'=>'AlternativeController@update']);
+        Route::match(['put', 'patch'], '/{alternative_id}',    ['as'=>'alternatives.update',  'uses'=>'AlternativeController@update']);
         Route::delete('/{alternative_id}',                     ['as'=>'alternatives.destroy', 'uses'=>'AlternativeController@destroy']);
         Route::get('/{alternative_id}/edit',                   ['as'=>'alternatives.edit',    'uses'=>'AlternativeController@edit']);
     });
     
     Route::group(['prefix' => 'answers'], function () {
         Route::get('/',                                     ['as'=>'answers.index',   'uses'=>'AnswerController@index']);
-        //Route::get('/create',                               ['as'=>'answers.create',  'uses'=>'AnswerController@create']);
-        //Route::post('/',                                    ['as'=>'answers.store',   'uses'=>'AnswerController@store']);
         Route::get('/{answer_id}',                          ['as'=>'answers.show',    'uses'=>'AnswerController@show']);
-        //Route::match(['put', 'patch'], '/{answer_id}',      ['as'=>'answers.update',  'uses'=>'AnswerController@update']);
-        Route::delete('/{answer_id}',                       ['as'=>'answers.destroy', 'uses'=>'AnswerController@destroy']);
-        Route::get('/{answer_id}/edit',                     ['as'=>'answers.edit',    'uses'=>'AnswerController@edit']);
     });
     
     Route::group(['prefix' => 'executables'], function () {
@@ -55,13 +48,11 @@ Route::group(['prefix' => config('quiz.models.parent_url_name'). '/{' . config('
     });
 
     Route::group(['prefix' => 'questions'], function () {
-        Route::get('/',                                          ['as'=>'questions.index',   'uses'=>'QuestionController@index']);
-        //Route::get('/create',                                    ['as'=>'questions.create',  'uses'=>'QuestionController@create']);
-        //Route::post('/',                                         ['as'=>'questions.store',   'uses'=>'QuestionController@store']);
-        Route::get('/{questions_id}',                            ['as'=>'questions.show',    'uses'=>'QuestionController@show']);
-        //Route::match(['put', 'patch'], '/{questions_id}',        ['as'=>'questions.update',  'uses'=>'QuestionController@update']);
-        Route::delete('/{questions_id}',                         ['as'=>'questions.destroy', 'uses'=>'QuestionController@destroy']);
-        Route::get('/{questions_id}/edit',                       ['as'=>'questions.edit',    'uses'=>'QuestionController@edit']);
+        Route::get('/',                                         ['as'=>'questions.index',   'uses'=>'QuestionController@index']);
+        Route::get('/{question_id}',                            ['as'=>'questions.show',    'uses'=>'QuestionController@show']);
+        Route::match(['put', 'patch'], '/{question_id}',        ['as'=>'questions.update',  'uses'=>'QuestionController@update']);
+        Route::delete('/{question_id}',                         ['as'=>'questions.destroy', 'uses'=>'QuestionController@destroy']);
+        Route::get('/{question_id}/edit',                       ['as'=>'questions.edit',    'uses'=>'QuestionController@edit']);
     });
 
 });
