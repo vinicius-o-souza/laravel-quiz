@@ -44,9 +44,9 @@ class QuestionDataTable extends DataTable
             ->editColumn('questionnaire_id', function (Question $question) {
                 return $question->questionnaire->name;
             })
-            ->addColumn('alternatives', function (Question $question) {
+            ->addColumn('alternatives', function (Question $question)  use ($parentName, $parent_id) {
                 if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
-                    return '<a href="'. route('alternatives.index', ['question_id' => $question->id]) .'"> Alternativas </a>';
+                    return '<a href="'. route('alternatives.index', [$parentName => $parent_id, 'question_id' => $question->id]) .'"> Alternativas </a>';
                 }
                 return '';
             })

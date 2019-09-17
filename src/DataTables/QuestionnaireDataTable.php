@@ -29,8 +29,8 @@ class QuestionnaireDataTable extends DataTable
             ->editColumn('answer_once', function (Questionnaire $questionnaire) {
                 return $questionnaire->answer_once ? 'Sim' : 'Não';
             })
-            ->addColumn('questions', function (Questionnaire $questionnaire) {
-                return '<a href="'. route('questions.index', ['questionnaire_id' => $questionnaire->id]) .'"> Questões </a>';
+            ->addColumn('questions', function (Questionnaire $questionnaire) use ($parentName, $parent_id) {
+                return '<a href="'. route('questions.index', [$parentName => $parent_id, 'questionnaire_id' => $questionnaire->id]) .'"> Questões </a>';
             })
             ->addColumn('execution_time', function (Questionnaire $questionnaire) {
                 if ($questionnaire->execution_time) {
