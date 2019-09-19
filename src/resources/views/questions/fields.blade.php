@@ -31,5 +31,5 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('questions.index', request()->$parentId) !!}" class="btn btn-default">Cancelar</a>
+    <a href="{!! route('questions.index', [$parentId => request()->$parentId, 'questionnaire_id' => request()->questionnaire_id]) !!}" class="btn btn-default">Cancelar</a>
 </div>

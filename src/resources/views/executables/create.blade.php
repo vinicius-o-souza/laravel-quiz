@@ -21,9 +21,8 @@
                 </div>
                 <div id="questionnaire_form_block">
                     <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
-                    {!! Form::open(['route' => ['executables.store', request()->$parentId], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
+                    {!! Form::open(['route' => ['executables.store', request()->$parentId, $questionnaire->id], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
                         <input id="model_id" type="hidden" name="model_id" value="{{ Auth::user()->id }}">
-                        <input id="questionnaire_id" type="hidden" name="questionnaire_id" value="{{ $questionnaire->id }}">
                         <div class="row p-md-5">
                             @foreach($questionnaire->questions as $key => $question)
                                 <div class="form-group col-sm-12 col-md-6">
@@ -44,7 +43,7 @@
                             <!-- Submit Field -->
                             <div class="form-group col-sm-12 pt-5">
                                 {!! Form::submit('Responder', ['class' => 'btn btn-primary']) !!}
-                                <a href="{!! route('executables.index', ['parent_id' => request()->$parentId, 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
+                                <a href="{!! route('executables.index', [$parentId => request()->$parentId, 'questionnaire_id' => $questionnaire->id]) !!}" class="btn btn-default">Cancelar</a>
                             </div>
                         </div>
                     {!! Form::close() !!}
@@ -62,13 +61,13 @@
 
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         });
     
         $(document).on("click", "#start_button", function() {
             var modelId = $('#model_id').val();
-            var questionnaireId = $('#questionnaire_id').val();
+            var questionnaireId = '{!! request()->questionnaire_id !!}';
             $.ajax({
                 url:'{!! route("executables.start", request()->$parentId) !!}',
                 type: 'POST',

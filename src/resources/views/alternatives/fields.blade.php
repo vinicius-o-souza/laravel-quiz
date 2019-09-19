@@ -19,11 +19,10 @@
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Salvar', ['class' => 'btn btn-primary']) !!}
-    <a href="{!! route('alternatives.index', request()->$parentId) !!}" class="btn btn-default">Cancelar</a>
+    <a href="{!! route('alternatives.index', [$parentId => request()->$parentId, 'question_id' => request()->question_id]) !!}" class="btn btn-default">Cancelar</a>
 </div>
 
 @push('scripts_quiz')
-    <script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}"></script>
     <script type="text/javascript">
         if($('#is_correct').prop('checked')) {
             $('#value_block').show();

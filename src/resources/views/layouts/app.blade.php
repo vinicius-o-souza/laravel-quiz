@@ -19,5 +19,6 @@
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}"></script>
     @stack('scripts_quiz')
 @endsection

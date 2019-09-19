@@ -16,7 +16,7 @@
     {!! Form::checkbox('checkbox_waiting_time', null, null, ['id' => 'checkbox_waiting_time']) !!}
 </div>
 
-<div class="row col-sm-12" id="waiting_time_block" style="display:none">
+<div class="row col-sm-6" id="waiting_time_block" style="display:none">
     <!-- Waiting Time Field -->
     <div class="form-group col-sm-6">
         {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
@@ -57,7 +57,7 @@
     {!! Form::checkbox('checkbox_execution_time', null, null, ['id' => 'checkbox_execution_time']) !!}
 </div>
 
-<div class="row col-sm-12" id="execution_time_block" style="display:none">
+<div class="row col-sm-6" id="execution_time_block" style="display:none">
     <!-- Execution Time Field -->
     <div class="form-group col-sm-6">
         {!! Form::label('execution_time', 'Tempo de Execução:') !!}
@@ -116,7 +116,6 @@
 </div>
 
 @push('scripts_quiz')
-<script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/pandoapps/js/ractive.js') }}"></script>
 <script src="{{ asset('vendor/pandoapps/js/jquery.ba-throttle-debounce.min.js') }}"></script>
 
@@ -161,7 +160,7 @@
                     <!-- Weight Field -->
                     <div class="form-group col-sm-12 col-md-6">
                         <label for="weight">Peso da questão:  <span class="text-danger"> * </span></label>
-                        <input type="number" id="weight" name="weight[@{{ id }}]" class="form-control" value="@{{ weight }}" required>
+                        <input type="number" id="weight" name="weight[@{{ id }}]" class="form-control" min="1" value="@{{ weight }}" required>
                     </div>
 
                     <!-- Is Required Field -->
@@ -229,8 +228,8 @@
             
             <!-- Value Field -->
             <div class="form-group col-sm-12 col-md-6" id="alternative_value_@{{ idQuestion }}_@{{ id }}">
-                <label for="value">Nota da alternativa:  <span class="text-danger"> * </span></label>
-                <input type="number" id="value" name="value_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ value }}" min='0' max='10' required>
+                <label for="value">Valor da alternativa:  <span class="text-danger"> * </span></label>
+                <input type="number" id="value" name="value_alternative[@{{ idQuestion }}][@{{ id }}]" class="form-control" value="@{{ value }}" min='0' max='10'>
             </div>
             
         </div>
@@ -312,8 +311,10 @@
             var idQuestion = $(this).data('id-question');
             if($(this).prop('checked')) {
                 $('#alternative_value_'+ idQuestion + '_' + id).show();
+                $('#alternative_value_'+ idQuestion + '_' + id + ' input').prop('required', true);
             } else {
                 $('#alternative_value_'+ idQuestion + '_' + id).hide();
+                $('#alternative_value_'+ idQuestion + '_' + id + ' input').prop('required', false);
             }
         });
         
@@ -353,16 +354,16 @@
             
             questionnaire.splice(thisIdQuestion - 1, 1); 
             
-            $('#question_' + thisIdQuestion).remove();
-            
-            var countQuestion = $('.questions').length;
-            
-            $('#countQuestion').val(countQuestion);
-            
+            var status = true;
             if(typeof thisIdQuestion != "string") {
-                questionDeleteAjax(thisIdQuestion);
+                status = questionDeleteAjax(thisIdQuestion);
+            }
+            if(status) {
+                $('#question_' + thisIdQuestion).remove();
             }
             
+            var countQuestion = $('.questions').length;
+            $('#countQuestion').val(countQuestion);
         });
     
         $(document).on('click', '.alternativeDelete_js', function() {
@@ -377,10 +378,12 @@
             
             questionnaire[thisIdQuestion - 1]['alternatives'].splice(thisIdAlternative - 1, 1);
             
-            $('#alternative_'+ thisIdQuestion + '_' + thisIdAlternative).remove();
-            
+            var status = true;
             if(typeof thisIdAlternative != "string") {
-                alternativeDeleteAjax(thisIdAlternative);
+                status = alternativeDeleteAjax(thisIdAlternative);
+            }
+            if(status) {
+                $('#alternative_'+ thisIdQuestion + '_' + thisIdAlternative).remove();   
             }
         });
 
@@ -454,17 +457,21 @@
     }
     
     function questionDeleteAjax(id) {
+        var success = false;
         $.ajax({
             url: '/{{ $parentName }}/{{ request()->$parentId }}/questions/' + id,
             type: 'POST',
             datatype: 'json',
             data: {
-                "_token": $("meta[name='csrf-token']").attr("content"),
+                "_token": '{{ csrf_token() }}',
                 "_method": 'DELETE',
                 id: id,
             },
             success: function(response){
-                alert("Questão deletada com suceso!");
+                if(response.status == 'success') {
+                    success = true;
+                }
+                alert(response.msg);
             },
             error: function(response) {
                 alert("Não foi possível deletar a questão. Tente novamente mais tarde.");
@@ -476,17 +483,21 @@
     }
     
     function alternativeDeleteAjax(id) {
+        var success = false;
         $.ajax({
-            url: '/alternatives/' + id,
+            url: '/{{ $parentName }}/{{ request()->$parentId }}/alternatives/' + id,
             type: 'POST',
             datatype: 'json',
             data: {
-                "_token": $("meta[name='csrf-token']").attr("content"),
+                "_token": '{{ csrf_token() }}',
                 "_method": 'DELETE',
                 id: id,
             },
             success: function(response){
-                alert("Alternativa deletada com suceso!");
+                if(response.status == 'success') {
+                    success = true;
+                }
+                alert(response.msg);
             },
             error: function(response) {
                 alert("Não foi possível deletar a alternativa. Tente novamente mais tarde.");
@@ -495,6 +506,7 @@
                 alert("Não foi possível deletar a alternativa. Tente novamente mais tarde.");
             }
         });
+        return success;
     }
     
     function handleQuestionType(idQuestion) {

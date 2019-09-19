@@ -10,6 +10,56 @@
     <p>{!! $questionnaire->answer_once ? 'Sim' : 'Não' !!}</p>
 </div>
 
+@if(isset($questionnaire->waiting_time))
+    <!-- Waiting Time Field -->
+    <div class="form-group col-sm-6">
+        {!! Form::label('waiting_time', 'Tempo de Espera:') !!}
+        <p>{!! $questionnaire->waiting_time !!}
+            @switch($questionnaire->type_waiting_time)
+                @case(config('quiz.type_time.MINUTES.id'))
+                    {{ config('quiz.type_time.MINUTES.name')}}
+                    @break
+                @case(config('quiz.type_time.HOURS.id'))
+                    {{ config('quiz.type_time.HOURS.name')}}
+                    @break
+                @case(config('quiz.type_time.DAYS.id'))
+                    {{ config('quiz.type_time.DAYS.name')}}
+                    @break
+                @case(config('quiz.type_time.MONTHS.id'))
+                    {{ config('quiz.type_time.MONTHS.name')}}
+                    @break
+                @default
+                    {{ config('quiz.type_time.YEARS.name')}}
+            @endswitch
+        </p>
+    </div>
+@endif
+
+@if(isset($questionnaire->execution_time))
+    <!-- Execution Time Field -->
+    <div class="form-group col-sm-6">
+        {!! Form::label('execution_time', 'Tempo de Execução:') !!}
+        <p>{!! $questionnaire->execution_time !!}
+            @switch($questionnaire->type_execution_time)
+                @case(config('quiz.type_time.MINUTES.id'))
+                    {{ config('quiz.type_time.MINUTES.name')}}
+                    @break
+                @case(config('quiz.type_time.HOURS.id'))
+                    {{ config('quiz.type_time.HOURS.name')}}
+                    @break
+                @case(config('quiz.type_time.DAYS.id'))
+                    {{ config('quiz.type_time.DAYS.name')}}
+                    @break
+                @case(config('quiz.type_time.MONTHS.id'))
+                    {{ config('quiz.type_time.MONTHS.name')}}
+                    @break
+                @default
+                    {{ config('quiz.type_time.YEARS.name')}}
+            @endswitch
+        </p>
+    </div>
+@endif
+
 <div class="col-sm-12">
     <div class="card">
         <div class="card-header">
@@ -70,7 +120,7 @@
                                             
                                             <!-- Value Field -->
                                             <div class="form-group col-sm-12 col-md-6">
-                                                <label>Peso da alternativa:</label>
+                                                <label>Valor da alternativa:</label>
                                                 <p> {!! $alternative->value !!}</p>
                                             </div>
                                             

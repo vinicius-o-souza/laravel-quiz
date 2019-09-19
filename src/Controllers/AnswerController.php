@@ -5,6 +5,7 @@ namespace PandoApps\Quiz\Controllers;
 use Illuminate\Routing\Controller;
 use PandoApps\Quiz\DataTables\AnswerDataTableInterface;
 use PandoApps\Quiz\Models\Answer;
+use PandoApps\Quiz\Helpers\Helpers;
 
 class AnswerController extends Controller
 {
@@ -14,8 +15,7 @@ class AnswerController extends Controller
     public function __construct(AnswerDataTableInterface $answerDataTableInterface)
     {
         $this->answerDataTableInterface = $answerDataTableInterface;
-        $this->params = \Route::getCurrentRoute()->parameters();
-        unset($this->params['answer_id']);
+        $this->params = Helpers::getAllParameters();
     }
 
     /**
