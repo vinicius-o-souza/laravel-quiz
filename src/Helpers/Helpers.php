@@ -27,4 +27,24 @@ class Helpers
                 return $time->copy()->addYears($timePlus);
         }
     }
+    
+    public static function getAllParameters() {
+        $params = \Route::getCurrentRoute()->parameters();
+        if(isset($_GET['alternative_id'])) {
+            $params['alternative_id'] = $_GET['alternative_id'];
+        }
+        if(isset($_GET['answer_id'])) {
+            $params['answer_id'] = $_GET['answer_id'];
+        }
+        if(isset($_GET['executable_id'])) {
+            $params['executable_id'] = $_GET['executable_id'];
+        }
+        if(isset($_GET['question_id'])) {
+            $params['question_id'] = $_GET['question_id'];
+        }
+        if(isset($_GET['questionnaire_id'])) {
+            $params['questionnaire_id'] = $_GET['questionnaire_id'];
+        }
+        return $params;
+    }
 }

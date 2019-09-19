@@ -11,6 +11,7 @@ use PandoApps\Quiz\Models\Executable;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Models\Questionnaire;
 use PandoApps\Quiz\Services\ExecutionTimeService;
+use PandoApps\Quiz\Helpers\Helpers;
 
 class ExecutableController extends Controller
 {
@@ -22,8 +23,7 @@ class ExecutableController extends Controller
     {
         $this->parentId = config('quiz.models.parent_id');
         $this->executableDataTableInterface = $executableDataTableInterface;
-        $this->params = \Route::getCurrentRoute()->parameters();
-        unset($this->params['alternative_id']);
+        $this->params = Helpers::getAllParameters();
     }
     
     /**
@@ -33,6 +33,29 @@ class ExecutableController extends Controller
      */
     public function index()
     {
+        // $parentId = config('quiz.modes.parent_id');
+        // $parentId = request()->$parentId;
+        // $questionnaireId = request()->questionnaire_id;
+        // $modelId = request()->model_id;
+        
+        // $questionnaire = Questionnaire::find($questionnaireId);
+        
+        // if (empty($questionnaire)) {
+        //     flash('Questionário não encontrado!')->error();
+        //     return redirect(route('questionnaires.index', $this->params));
+        // }
+        
+        // $executablesIndividual = Executable::where('questionnaire_id', $questionnaire->id)
+        //                                     ->with('answers');
+        // if ($modelId) {
+        //     $executablesIndividual->where('executable_id', $modelId);
+        // } else {
+        //     $executablesIndividual = $executablesIndividual->groupBy('executable_id', 'id');
+        // }
+        // dd($executablesIndividual->get());
+        // $executablesIndividual = $executablesIndividual->paginate(1);
+        
+        // return view('pandoapps::executables.index', compact('executablesIndividual'));
         return $this->executableDataTableInterface->render('pandoapps::executables.index');
     }
 
@@ -85,11 +108,11 @@ class ExecutableController extends Controller
     public function store(Request $request, ExecutionTimeService $executionTimeService)
     {
         $parentId = $this->parentId;
-        $input = $request->except(['_token', 'model_id', 'questionnaire_id']);
+        $input = $request->except(['_token', 'model_id']);
         
-        $variables = $request->only(['model_id', 'questionnaire_id']);
+        $variables = $request->only(['model_id']);
         $modelId = $variables['model_id'];
-        $questionnaireId = $variables['questionnaire_id'];
+        $questionnaireId = $request->questionnaire_id;
         
         $questionnaire = Questionnaire::find($questionnaireId);
         
@@ -166,7 +189,6 @@ class ExecutableController extends Controller
         $executionTimeService->deleteRedisKey($questionnaire, $modelId);
         
         flash('Questionário respondido com sucesso!')->success();
-        
         return redirect(route('executables.index', $this->params));
     }
 

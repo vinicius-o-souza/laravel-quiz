@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use PandoApps\Quiz\DataTables\QuestionDataTableInterface;
 use PandoApps\Quiz\Models\Question;
+use PandoApps\Quiz\Helpers\Helpers;
 
 class QuestionController extends Controller
 {
@@ -16,7 +17,7 @@ class QuestionController extends Controller
     public function __construct(QuestionDataTableInterface $questionDataTableInterface)
     {
         $this->questionDataTableInterface = $questionDataTableInterface;
-        $this->params = \Route::getCurrentRoute()->parameters();
+        $this->params = Helpers::getAllParameters();
         unset($this->params['question_id']);
     }
 
@@ -95,7 +96,7 @@ class QuestionController extends Controller
             flash($msg)->error();
             return redirect()->back()->withInput();
         }
-
+        dd($this->params);
         $question->update($input);
         flash('Questão atualizado com sucesso!')->success();
         return redirect(route('questions.index', $this->params));
@@ -112,14 +113,24 @@ class QuestionController extends Controller
         $question = Question::find($id);
 
         if (empty($question)) {
-            flash('Questão não encontrada!')->error();
-            return redirect(route('questions.index', $this->params));
+            if (request()->ajax()) {
+                return response()->json([
+                    'status' => 'error', 
+                    'msg'    => 'Questão não encontrada!'
+                ]);
+            } else {
+                flash('Questão não encontrada!')->error();
+                return redirect(route('questions.index', $this->params));
+            }
         }
 
         $question->delete();
 
         if (request()->ajax()) {
-            return response()->json(['status' => 'Questão deletada']);
+            return response()->json([
+                'status' => 'success',
+                'msg'    => 'Questão deletada com sucesso'
+            ]);
         }
         flash('Questão deletada com sucesso!')->success();
         return redirect(route('questions.index', $this->params));

@@ -26,14 +26,10 @@ Route::group(['prefix' => config('quiz.models.parent_url_name'). '/{' . config('
     });
     
     Route::group(['prefix' => 'executables'], function () {
-        Route::get('/', 'ExecutableController@index')->name('executables.index');
-        
+        Route::get('/{questionnaire_id}/questionnaire', 'ExecutableController@index')->name('executables.index');
         Route::get('{executable_id}/', 'ExecutableController@show')->name('executables.show');
-        
         Route::get('{questionnaire_id}/create/{model_id}', 'ExecutableController@create')->name('executables.create');
-        
-        Route::post('store', 'ExecutableController@store')->name('executables.store');
-
+        Route::post('{questionnaire_id}/store', 'ExecutableController@store')->name('executables.store');
         Route::post('start', 'ExecutableController@handleStartExecutable')->name('executables.start');
     });
     

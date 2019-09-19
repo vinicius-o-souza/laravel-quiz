@@ -10,6 +10,7 @@ use PandoApps\Quiz\DataTables\QuestionnaireDataTableInterface;
 use PandoApps\Quiz\Models\Alternative;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Models\Questionnaire;
+use PandoApps\Quiz\Helpers\Helpers;
 
 class QuestionnaireController extends Controller
 {
@@ -19,7 +20,7 @@ class QuestionnaireController extends Controller
     public function __construct(QuestionnaireDataTableInterface $questionnaireDataTableInterface)
     {
         $this->questionnaireDataTableInterface = $questionnaireDataTableInterface;
-        $this->params = \Route::getCurrentRoute()->parameters();
+        $this->params = Helpers::getAllParameters();
         unset($this->params['questionnaire_id']);
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use PandoApps\Quiz\DataTables\AlternativeDataTableInterface;
 use PandoApps\Quiz\Models\Alternative;
+use PandoApps\Quiz\Helpers\Helpers;
 
 class AlternativeController extends Controller
 {
@@ -17,7 +18,9 @@ class AlternativeController extends Controller
     {
         $this->alternativeDataTableInterface = $alternativeDataTableInterface;
         $this->params = \Route::getCurrentRoute()->parameters();
-        unset($this->params['alternative_id']);
+        if(isset($_GET['question_id'])) {
+            $this->params['question_id'] = $_GET['question_id'];
+        }
     }
 
     /**
@@ -116,24 +119,40 @@ class AlternativeController extends Controller
         $alternative = Alternative::find($id);
 
         if (empty($alternative)) {
-            flash('Alternativa não encontrada!')->error();
-            return redirect(route('alternatives.index', $this->params));
+            if (request()->ajax()) {
+                return response()->json([
+                    'status' => 'error',
+                    'msg'    => 'Alternativa não encontrada'
+                ]);
+            } else {
+                flash('Alternativa não encontrada!')->error();
+                return redirect(route('alternatives.index', $this->params));
+            }
         }
         
         $question = $alternative->question;
         if ($question->alternatives()->count() == 1) {
-            flash('Questões fechadas devem ter no mínimo 1 alternativa!')->error();
-            return redirect(route('alternatives.index', $this->params));
+            if (request()->ajax()) {
+                return response()->json([
+                    'status' => 'error', 
+                    'msg'    => 'Questões fechadas devem ter no mínimo 1 alternativa!'
+                ]);
+            } else {
+                flash('Questões fechadas devem ter no mínimo 1 alternativa!')->error();
+                return redirect(route('alternatives.index', $this->params));   
+            }
         }
 
         $alternative->delete();
         
         if (request()->ajax()) {
-            return response()->json(['status' => 'Alternativa deletada']);
+            return response()->json([
+                'status' => 'success',
+                'msg'    => 'Alternativa deletada com sucesso'
+            ]);
         }
 
         flash('Alternativa deletada com sucesso!')->success();
-
-        return redirect(route('alternatives.index', $parentId));
+        return redirect(route('alternatives.index', $this->params));
     }
 }

@@ -20,4 +20,43 @@ return [
     'next'              => '&gt;',
     'previous'          => '&lt;',
     
+    'columns'           => [
+        'alternatives'  => [
+            'question'          => 'Questão',
+            'description'       => 'Descrição',
+            'value'             => 'Valor',
+            'is_correct'        => 'Correta?'    
+        ],
+        'answers'       => [
+            'question'          => 'Questão',
+            'alternative'       => 'Alternativa',
+            'description'       => 'Descrição',
+            'score'             => 'Pontuação'
+        ],
+        'executables'   => [
+            'executable_id'     => 'Respondeu',
+            'questionnaire_id'  => 'Questionário',
+            'score'             => 'Nota',
+            'created_at'        => 'Data'  
+        ],
+        'questions'     => [
+            'questionnaire_id'  => 'Questionário',
+            'question_type'     => 'Tipo da Questão',
+            'description'       => 'Descrição',
+            'hint'              => 'Dica',
+            'weight'            => 'Peso',
+            'is_required'       => 'Obrigatória',
+            'is_active'         => 'Ativa',
+            'alternatives'      => 'Alternativas'
+        ],
+        'questionnaires' => [
+            'name'              => 'Nome',
+            'answer_once'       => 'Resposta Única',
+            'is_active'         => 'Ativo',
+            'questions'         => 'Questões',
+            'execution_time'    => 'Tempo total para execução do questionário',
+            'waiting_time'      => 'Tempo de espera para a próxima execução'
+        ]
+    ]
+    
 ];

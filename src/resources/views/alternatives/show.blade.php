@@ -4,7 +4,7 @@
     <section class="content-header">
         <h1 class="pull-left"> Alternativas</h1>
         <h1 class="pull-right">
-            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('alternatives.index', request()->$parentId) !!}">Voltar</a>
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('alternatives.index', [$parentId => request()->$parentId, 'question_id' => request()->question_id]) !!}">Voltar</a>
         </h1>
     </section>
     <div class="content">
