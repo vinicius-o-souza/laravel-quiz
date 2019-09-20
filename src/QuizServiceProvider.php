@@ -18,6 +18,12 @@ class QuizServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/resources/lang', 'pandoapps');
         $this->loadViewsFrom(__DIR__.'/resources/views', 'pandoapps');
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        $this->app['router']->namespace('PandoApps\\Quiz\\Controllers')
+                ->middleware(['web'])
+                ->group(function () {
+                    $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+                });
+
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
