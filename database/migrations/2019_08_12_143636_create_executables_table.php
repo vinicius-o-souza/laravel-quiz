@@ -21,12 +21,12 @@ class CreateExecutablesTable extends Migration
          */
         Schema::create('executables', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('executable_id');
+            $table->integer('executable_id');
             $table->string('executable_type');
             $table->float('score');
             $table->boolean('answered')->nullable();
             
-            $table->bigInteger('questionnaire_id')->unsigned();
+            $table->integer('questionnaire_id')->unsigned();
             $table->foreign('questionnaire_id')->references('id')->on('questionnaires')->onDelete('cascade');
 
             $table->timestamps();

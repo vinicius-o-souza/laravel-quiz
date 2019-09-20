@@ -27,9 +27,9 @@ class CreateAnswersTable extends Migration
             $table->longText('description')->nullable();
             $table->float('score')->nullable();
 
-            $table->bigInteger('alternative_id')->unsigned()->nullable();
-            $table->bigInteger('question_id')->unsigned();
-            $table->bigInteger('executable_id')->unsigned();
+            $table->integer('alternative_id')->unsigned()->nullable();
+            $table->integer('question_id')->unsigned();
+            $table->integer('executable_id')->unsigned();
 
             $table->foreign('alternative_id')->references('id')->on('alternatives')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');

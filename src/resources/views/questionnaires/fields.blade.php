@@ -449,8 +449,10 @@
         
         if (is_correct) {
             $('#alternative_value_'+ idQuestion + '_' + idAlternative).show();
+            $('#alternative_value_'+ idQuestion + '_' + idAlternative + ' input').prop('required', true);
         } else {
             $('#alternative_value_'+ idQuestion + '_' + idAlternative).hide();
+            $('#alternative_value_'+ idQuestion + '_' + idAlternative + ' input').prop('required', false);
         }
         
         $('#countAlternatives_' + idQuestion).val(countAlternative);

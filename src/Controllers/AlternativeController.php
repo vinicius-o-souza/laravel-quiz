@@ -17,10 +17,8 @@ class AlternativeController extends Controller
     public function __construct(AlternativeDataTableInterface $alternativeDataTableInterface)
     {
         $this->alternativeDataTableInterface = $alternativeDataTableInterface;
-        $this->params = \Route::getCurrentRoute()->parameters();
-        if(isset($_GET['question_id'])) {
-            $this->params['question_id'] = $_GET['question_id'];
-        }
+        $this->params = Helpers::getAllParameters();
+        unset($this->params['alternative_id']);
     }
 
     /**

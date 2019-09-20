@@ -2,7 +2,10 @@
     @csrf
     @method('DELETE')
     <div class='btn-group'>
-        <a href="{{ route('executables.index', [$parentId => request()->$parentId, 'questionnaire_id' => $id]) }}" class='btn btn-primary' title="Respostas do Questionário">
+        <a href="{{ route('executables.statistics', [$parentId => request()->$parentId, 'questionnaire_id' => $id]) }}" class='btn btn-primary' title="Estatísticas do Questionário">
+            <i class="fa fa-pie-chart"></i>
+        </a>
+        <a href="{{ route('executables.index', [$parentId => request()->$parentId, 'questionnaire_id' => $id]) }}" class='btn btn-secondary text-white' title="Respostas do Questionário">
             <i class="fa fa-tasks"></i>
         </a>
         <a href="{{ route('executables.create', [$parentId => request()->$parentId, 'questionnaire_id' => $id, 'model_id' => Auth::user()->id]) }}" class='btn btn-success' title="Responder questionário">

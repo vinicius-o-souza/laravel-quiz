@@ -31,8 +31,8 @@ class CreateQuestionsTable extends Migration
             $table->boolean('is_required')->default(true);
             $table->float('weight')->default(1);
 
-            $table->bigInteger('questionnaire_id')->unsigned();
-            $table->bigInteger('question_type_id')->unsigned();
+            $table->integer('questionnaire_id')->unsigned();
+            $table->integer('question_type_id')->unsigned();
 
             $table->foreign('questionnaire_id')->references('id')->on('questionnaires')->onDelete('cascade');
             $table->foreign('question_type_id')->references('id')->on('question_types')->onDelete('cascade');

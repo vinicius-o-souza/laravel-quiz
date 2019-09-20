@@ -10,7 +10,10 @@ use PandoApps\Quiz\Models\Answer;
 use PandoApps\Quiz\Models\Executable;
 use PandoApps\Quiz\Models\Question;
 use PandoApps\Quiz\Models\Questionnaire;
+use PandoApps\Quiz\Services\AnswersChartService;
+use PandoApps\Quiz\Services\ChartService;
 use PandoApps\Quiz\Services\ExecutionTimeService;
+use PandoApps\Quiz\Services\StatisticsService;
 use PandoApps\Quiz\Helpers\Helpers;
 
 class ExecutableController extends Controller
@@ -24,6 +27,7 @@ class ExecutableController extends Controller
         $this->parentId = config('quiz.models.parent_id');
         $this->executableDataTableInterface = $executableDataTableInterface;
         $this->params = Helpers::getAllParameters();
+        unset($this->params['executable_id']);
     }
     
     /**
@@ -33,30 +37,32 @@ class ExecutableController extends Controller
      */
     public function index()
     {
-        // $parentId = config('quiz.modes.parent_id');
-        // $parentId = request()->$parentId;
-        // $questionnaireId = request()->questionnaire_id;
-        // $modelId = request()->model_id;
-        
-        // $questionnaire = Questionnaire::find($questionnaireId);
-        
-        // if (empty($questionnaire)) {
-        //     flash('Questionário não encontrado!')->error();
-        //     return redirect(route('questionnaires.index', $this->params));
-        // }
-        
-        // $executablesIndividual = Executable::where('questionnaire_id', $questionnaire->id)
-        //                                     ->with('answers');
-        // if ($modelId) {
-        //     $executablesIndividual->where('executable_id', $modelId);
-        // } else {
-        //     $executablesIndividual = $executablesIndividual->groupBy('executable_id', 'id');
-        // }
-        // dd($executablesIndividual->get());
-        // $executablesIndividual = $executablesIndividual->paginate(1);
-        
-        // return view('pandoapps::executables.index', compact('executablesIndividual'));
         return $this->executableDataTableInterface->render('pandoapps::executables.index');
+    }
+    
+    /**
+     * Display a statistics of executions the questionnaire.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function statistics(AnswersChartService $answersChartService, ChartService $chartService, StatisticsService $statisticsService) {
+        $parentId = config('quiz.modes.parent_id');
+        $parentId = request()->$parentId;
+        $questionnaireId = request()->questionnaire_id;
+        $modelId = request()->modelId;
+        
+        $questionnaire = Questionnaire::find($questionnaireId);
+        
+        if (empty($questionnaire)) {
+            flash('Questionário não encontrado!')->error();
+            return redirect(route('questionnaires.index', $this->params));
+        }
+         
+        $executablesSummary = $statisticsService->getSummary($answersChartService, $chartService, $questionnaire);
+        
+        $executablesIndividual = $statisticsService->getIndividual($answersChartService, $questionnaire, $modelId);
+        
+        return view('pandoapps::executables.statistics', compact('executablesSummary', 'executablesIndividual', 'questionnaire'));
     }
 
     /**
@@ -141,7 +147,7 @@ class ExecutableController extends Controller
             foreach ($input as $idQuestion => $answer) {
                 $question = Question::find($idQuestion);
                 
-                if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+                if ($question->isClosed()) {
                     $alternative = Alternative::find($answer);
                     
                     if ($alternative->is_correct) {

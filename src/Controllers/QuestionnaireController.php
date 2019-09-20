@@ -91,7 +91,7 @@ class QuestionnaireController extends Controller
                     'questionnaire_id'  => $questionnaire->id
                 ]);
                 
-                if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+                if ($question->isClosed()) {
                     if ($input['countAlternatives'][$keyQuestion] > 0) {
                         foreach (array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
                             $value = $input['value_alternative'][$keyQuestion][$keyAlternative];
@@ -236,7 +236,7 @@ class QuestionnaireController extends Controller
                 ]
             );
             
-            if ($question->question_type_id == config('quiz.question_types.CLOSED.id')) {
+            if ($question->isClosed()) {
                 if ($input['countAlternatives'][$keyQuestion] > 0) {
                     foreach (array_keys($input['description_alternative'][$keyQuestion]) as $keyAlternative) {
                         $value = $input['value_alternative'][$keyQuestion][$keyAlternative];

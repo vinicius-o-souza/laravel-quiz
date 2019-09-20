@@ -24,7 +24,7 @@ class CreateAlternativesTable extends Migration
             $table->float('value');
             $table->boolean('is_correct');
 
-            $table->bigInteger('question_id')->unsigned();
+            $table->integer('question_id')->unsigned();
 
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
 

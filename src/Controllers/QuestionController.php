@@ -96,7 +96,6 @@ class QuestionController extends Controller
             flash($msg)->error();
             return redirect()->back()->withInput();
         }
-        dd($this->params);
         $question->update($input);
         flash('Questão atualizado com sucesso!')->success();
         return redirect(route('questions.index', $this->params));

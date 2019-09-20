@@ -87,4 +87,11 @@ class Question extends Model
     {
         return $this->hasMany(Answer::class);
     }
+    
+    /**
+     * Return if question is closed type
+     */
+    public function isClosed() {
+        return $this->question_type_id == config('quiz.question_types.CLOSED.id');
+    }
 }

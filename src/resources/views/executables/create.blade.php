@@ -27,9 +27,7 @@
                             @foreach($questionnaire->questions as $key => $question)
                                 <div class="form-group col-sm-12 col-md-6">
                                     <h4> <span class="font-weight-bold">{!! $key + 1 !!}.</span> {!! $question->description !!} {!! $question->is_required ? '<span class="text-danger"> * </span>' : '' !!}</h4>
-                                    @if($question->question_type_id == config('quiz.question_types.OPEN.id'))
-                                        <textarea class="form-control" name="{!! $question->id !!}" id="{!! $question->id !!}" rows="2" {!! $question->is_required ? 'required' : '' !!}></textarea>
-                                    @else
+                                    @if($question->isClosed())
                                         <div class="form-group">
                                             @foreach($question->alternatives as $alternative)
                                                 <div class="radio">
@@ -37,6 +35,8 @@
                                                 </div>
                                             @endforeach
                                         </div>
+                                    @else
+                                        <textarea class="form-control" name="{!! $question->id !!}" id="{!! $question->id !!}" rows="2" {!! $question->is_required ? 'required' : '' !!}></textarea>
                                     @endif
                                 </div>
                             @endforeach    
