@@ -18,6 +18,7 @@
     "keywords": ["Laravel", "Quiz"],
     "require": {
         "php" : ">=7.0",
+        "ghunti/highcharts-php": "~3.0",
         "laracasts/flash": "^3.0",
         "laravelcollective/html": "^5.8.0",
         "predis/predis": "^1.1",
