@@ -19,7 +19,7 @@ class CreateAlternativesTable extends Migration
          *    question_id  => id da questão associada,
          */
         Schema::create('alternatives', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->text('description');
             $table->float('value');
             $table->boolean('is_correct');

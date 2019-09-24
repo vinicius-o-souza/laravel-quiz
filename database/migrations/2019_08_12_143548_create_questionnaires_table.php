@@ -20,7 +20,7 @@ class CreateQuestionnairesTable extends Migration
          *    answer_once => define se o questionário pode ser respondido apenas uma vez ou não para cada usuário
          */
         Schema::create('questionnaires', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->boolean('is_active')->default(true);
             $table->text('name');
             $table->boolean('answer_once')->default(false);

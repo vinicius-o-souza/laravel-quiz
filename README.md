@@ -89,12 +89,12 @@ Route::group(['prefix' => config('quiz.models.parent_url_name'). '/{' . config('
     });
     
     Route::group(['prefix' => 'executables'], function () {
-        Route::get('/', 'ExecutableController@index')->name('executables.index');
-        Route::get('/{questionnaire_id}/questionnaire', 'ExecutableController@statistics')->name('executables.statistics');
-        Route::get('{executable_id}/', 'ExecutableController@show')->name('executables.show');
-        Route::get('{questionnaire_id}/create/{model_id}', 'ExecutableController@create')->name('executables.create');
-        Route::post('{questionnaire_id}/store', 'ExecutableController@store')->name('executables.store');
-        Route::post('start', 'ExecutableController@handleStartExecutable')->name('executables.start');
+        Route::get('/',                                     ['as'=>'executables.index',         'uses'=>'\PandoApps\Quiz\Controllers\ExecutableController@index']);
+        Route::get('/{questionnaire_id}/questionnaire',     ['as'=>'executables.statistics',    'uses'=>'\PandoApps\Quiz\Controllers\ExecutableController@statistics']);
+        Route::get('{executable_id}/',                      ['as'=>'executables.show',          'uses'=>'\PandoApps\Quiz\Controllers\ExecutableController@show']);
+        Route::get('{questionnaire_id}/create/{model_id}',  ['as'=>'executables.create',        'uses'=>'\PandoApps\Quiz\Controllers\ExecutableController@create']);
+        Route::post('{questionnaire_id}/store',             ['as'=>'executables.store',         'uses'=>'\PandoApps\Quiz\Controllers\ExecutableController@store']);
+        Route::post('start',                                ['as'=>'executables.start',         'uses'=>'\PandoApps\Quiz\Controllers\ExecutableController@start']);
     });
     
     Route::group(['prefix' => 'questionnaires'], function () {

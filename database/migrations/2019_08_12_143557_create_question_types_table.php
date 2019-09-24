@@ -19,7 +19,7 @@ class CreateQuestionTypesTable extends Migration
          *    description => breve descrição do tipo da questão
          */
         Schema::create('question_types', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('name');
             $table->text('description');
             $table->timestamps();

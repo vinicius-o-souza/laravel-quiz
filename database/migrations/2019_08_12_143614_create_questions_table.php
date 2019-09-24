@@ -24,7 +24,7 @@ class CreateQuestionsTable extends Migration
          *    question_type_id   => id do tipo de questão associado,
          */
         Schema::create('questions', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->boolean('is_active')->default(true);
             $table->text('description');
             $table->string('hint')->nullable();

@@ -20,7 +20,7 @@ class CreateExecutablesTable extends Migration
          *    questionnaire_id         => id do questionário
          */
         Schema::create('executables', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->integer('executable_id');
             $table->string('executable_type');
             $table->float('score');

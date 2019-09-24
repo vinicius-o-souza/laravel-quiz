@@ -232,7 +232,7 @@ class ExecutableController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function handleStartExecutable(Request $request, ExecutionTimeService $executionTimeService)
+    public function start(Request $request, ExecutionTimeService $executionTimeService)
     {
         $questionnaireId = $request->questionnaire_id;
         $parentId = $this->parentId;
