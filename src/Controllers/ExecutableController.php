@@ -77,8 +77,13 @@ class ExecutableController extends Controller
         $questionnaireId = request()->questionnaire_id;
         $modelId = request()->model_id;
         
-        $questionnaire = Questionnaire::with(['questions' => function ($query) {
-            $query->where('is_active', 1)->orderByRaw('RAND()');
+        $questionnaire = Questionnaire::find($questionnaireId);
+        $questionnaire = $questionnaire->with(['questions' => function ($query) use($questionnaire) {
+            if($questionnaire->rand_questions) {
+                $query->where('is_active', 1)->orderByRaw('RAND()');      
+            } else {
+                $query->where('is_active', 1);
+            }
         }, 'questions.alternatives'])->find($questionnaireId);
         
         if (empty($questionnaire)) {
@@ -159,7 +164,7 @@ class ExecutableController extends Controller
                     $sumWeight += $question->weight;
                     
                     Answer::create([
-                        'executable_id'      => $executable->id,
+                        'executable_id'     => $executable->id,
                         'alternative_id'    => $answer,
                         'question_id'       => $idQuestion,
                         'score'             => $score,
@@ -167,7 +172,7 @@ class ExecutableController extends Controller
                 } else {
                     $sumValues = null;
                     Answer::create([
-                        'executable_id'      => $executable->id,
+                        'executable_id'     => $executable->id,
                         'alternative_id'    => null,
                         'question_id'       => $idQuestion,
                         'description'       => $answer,
@@ -221,7 +226,8 @@ class ExecutableController extends Controller
     }
 
     /**
-     * Create a executable if start a executable
+     * Create a executable if start the questionnaire
+     * Ajax
      * 
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

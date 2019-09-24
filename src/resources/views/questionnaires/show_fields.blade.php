@@ -4,10 +4,22 @@
     <p>{!! $questionnaire->name !!}</p>
 </div>
 
-<!-- Display Name Field -->
+<!-- Is active Field -->
+<div class="form-group col-sm-12">
+    {!! Form::label('is_active', 'Questionário ativo:') !!}
+    <p>{!! $questionnaire->is_active ? 'Sim' : 'Não' !!}</p>
+</div>
+
+<!-- Answer Once Field -->
 <div class="form-group col-sm-12">
     {!! Form::label('answer_once', 'Resposta Única:') !!}
     <p>{!! $questionnaire->answer_once ? 'Sim' : 'Não' !!}</p>
+</div>
+
+<!-- Rand Questions Field -->
+<div class="form-group col-sm-12">
+    {!! Form::label('rand_questions', 'Randomizar as questões na hora da execução:') !!}
+    <p>{!! $questionnaire->rand_questions ? 'Sim' : 'Não' !!}</p>
 </div>
 
 @if(isset($questionnaire->waiting_time))
@@ -59,6 +71,24 @@
         </p>
     </div>
 @endif
+
+<!-- Instructions Before Start Field -->
+<div class="form-group col-sm-12">
+    {!! Form::label('instructions_before_start', 'Instruções do questionário antes de iniciá-lo!') !!}
+    {!! Form::textarea('instructions_before_start', $questionnaire->instructions_before_start, ['id' => 'instructions_before_start']) !!}
+</div>
+
+<!-- Instructions Start Field -->
+<div class="form-group col-sm-12">
+    {!! Form::label('instructions_start', 'Instruções no início do questionário!') !!}
+    {!! Form::textarea('instructions_start', $questionnaire->instructions_start, ['id' => 'instructions_start']) !!}
+</div>
+
+<!-- Instructions End Field -->
+<div class="form-group col-sm-12">
+    {!! Form::label('instructions_end', 'Instruções do fim do questionário!') !!}
+    {!! Form::textarea('instructions_end', $questionnaire->instructions_end, ['class' => 'form-control', 'id' => 'instructions_end']) !!}
+</div>
 
 <div class="col-sm-12">
     <div class="card">
@@ -141,3 +171,15 @@
         </ul>  
     </div>      
 </div>
+
+@push('scripts_quiz')
+    <script src="{{ asset('vendor/pandoapps/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('vendor/pandoapps/js/ckeditor/config.js') }}"></script>
+    <script>
+        CKEDITOR.replace('instructions_before_start');
+        CKEDITOR.replace('instructions_start');
+        CKEDITOR.replace('instructions_end');
+        
+        CKEDITOR.config.readOnly = true;
+    </script>
+@endpush

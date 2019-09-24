@@ -53,7 +53,7 @@ class Executable extends Model
      */
     public function answers()
     {
-        return $this->hasMany(Answer::class);
+        return $this->hasMany(Answer::class)->orderBy('question_id', 'ASC');
     }
     
     /**

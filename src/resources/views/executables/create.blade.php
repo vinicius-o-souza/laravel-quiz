@@ -16,11 +16,15 @@
         <div class="clearfix"></div>
         <div class="box box-primary">
             <div class="box-body">
-                <div id="start_block" class="container text-center" style="padding: 100px 50px">
-                    <button type="button" id="start_button" class="btn btn-success btn-lg" style="padding: 20px 40px">INICIAR <i class="fa fa-play"></i></button>
+                <div id="start_block">
+                    <div>{!! $questionnaire->instructions_before_start !!}</div>
+                    <div class="text-center"  style="padding: 100px 50px">
+                        <button type="button" id="start_button" class="btn btn-success btn-lg" style="padding: 20px 40px">INICIAR <i class="fa fa-play"></i></button>
+                    </div>
                 </div>
                 <div id="questionnaire_form_block">
                     <p id="timer" style="text-align: center; font-size: 60px; margin-top: 0px;"></p>
+                    <div>{!! $questionnaire->instructions_start !!}</div>
                     {!! Form::open(['route' => ['executables.store', request()->$parentId, $questionnaire->id], 'class' => 'w-100', 'id' => 'questionnaire_form']) !!}
                         <input id="model_id" type="hidden" name="model_id" value="{{ Auth::user()->id }}">
                         <div class="row p-md-5">
@@ -47,6 +51,7 @@
                             </div>
                         </div>
                     {!! Form::close() !!}
+                    <div>{!! $questionnaire->instructions_end !!}</div>
                 </div>            
             </div>
         </div>

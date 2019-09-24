@@ -26,7 +26,8 @@ class AnswersChartService
             $total += $value->y;
         }
         foreach($data as $value) {
-            $value->y = ($value->y * 100 / $total);
+            if($total)
+                $value->y = ($value->y * 100 / $total);
         }
         
         $series[] = [

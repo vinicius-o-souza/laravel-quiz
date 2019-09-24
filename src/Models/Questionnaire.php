@@ -30,7 +30,11 @@ class Questionnaire extends Model
         'waiting_time',
         'type_waiting_time',
         'execution_time',
-        'type_execution_time'
+        'type_execution_time',
+        'rand_questions',
+        'instructions_before_start',
+        'instructions_start',
+        'instructions_end',
     ];
 
     /**
@@ -45,7 +49,11 @@ class Questionnaire extends Model
         'waiting_time'          => 'integer',
         'type_waiting_time'     => 'integer',
         'execution_time'        => 'integer',
-        'type_execution_time'   => 'integer'
+        'type_execution_time'   => 'integer',
+        'rand_questions'        => 'boolean',
+        'instructions_before_start' => 'string',
+        'instructions_start'    => 'string',
+        'instructions_end'      => 'string',
     ];
 
     /**

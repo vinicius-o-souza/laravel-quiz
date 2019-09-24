@@ -3,6 +3,9 @@
 @section('content_pandoapps')
     <section class="content-header">
         <h1 class="pull-left">Execuções</h1>
+        <h1 class="pull-right">
+            <a class="btn btn-primary pull-right" style="margin-top: -10px;margin-bottom: 5px" href="{!! route('questionnaires.index', request()->$parentId) !!}">Voltar</a>
+        </h1>
     </section>
     <div class="content">
         <div class="clearfix"></div>
@@ -30,7 +33,7 @@
                                 </div>
                                 @if($question->isClosed())
                                     <div id="container-{!! $executablesSummary[$question->id]['chart']['chart_id'] !!}"></div>
-                                    @push('scripts_quiz2')
+                                    @push('scripts_charts')
                                         <script>
                                             {!! $executablesSummary[$question->id]['chart']['chart_data'] !!}
                                         </script>
@@ -62,7 +65,8 @@
                                     <div>
                                         @foreach($executable->answers as $key => $answer)
                                             <div class="form-group col-sm-12 col-md-6">
-                                                <h4> <span class="font-weight-bold">{!! $key + 1 !!}.</span> {!! $answer->question->description !!} {!! $answer->question->is_required ? '<span class="text-danger"> * </span>' : '' !!}</h4>
+                                                <h4> <span class="font-weight-bold">{!! $key + 1 !!}.</span> {!! $answer->question->description !!}</h4>
+                                                <h5> Nota: {{ $answer->score }}</h5>
                                                 @if($answer->question->question_type_id == config('quiz.question_types.OPEN.id'))
                                                     <textarea class="form-control" name="{!! $answer->question->id !!}" id="{!! $answer->question->id !!}" {!! $answer->question->is_required ? 'required' : '' !!} disabled> {!! $answer->description !!}</textarea>
                                                 @else

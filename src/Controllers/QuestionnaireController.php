@@ -69,14 +69,18 @@ class QuestionnaireController extends Controller
         DB::beginTransaction();
 
         $questionnaire = Questionnaire::create([
-            'name'                  => $input['name'],
-            'answer_once'           => isset($input['answer_once']) ? true : false,
-            'parent_id'             => $request->$parentId,
-            'parent_type'           => config('quiz.models.parent_type'),
-            'waiting_time'          => isset($input['waiting_time']) ? $input['waiting_time'] : null,
-            'type_waiting_time'     => isset($input['type_waiting_time']) ? $input['type_waiting_time'] : null,
-            'execution_time'        => isset($input['execution_time']) ? $input['execution_time'] : null,
-            'type_execution_time'   => isset($input['type_execution_time']) ? $input['type_execution_time'] : null
+            'name'                      => $input['name'],
+            'answer_once'               => isset($input['answer_once']) ? true : false,
+            'parent_id'                 => $request->$parentId,
+            'parent_type'               => config('quiz.models.parent_type'),
+            'waiting_time'              => isset($input['waiting_time']) ? $input['waiting_time'] : null,
+            'type_waiting_time'         => isset($input['type_waiting_time']) ? $input['type_waiting_time'] : null,
+            'execution_time'            => isset($input['execution_time']) ? $input['execution_time'] : null,
+            'type_execution_time'       => isset($input['type_execution_time']) ? $input['type_execution_time'] : null,
+            'rand_questions'            => isset($input['rand_questions']) ? true : false,
+            'instructions_before_start' => $input['instructions_before_start'],
+            'instructions_start'        => $input['instructions_start'],
+            'instructions_end'          => $input['instructions_end'],
         ]);
         
         if ($input['countQuestion'] > 0) {
@@ -193,20 +197,26 @@ class QuestionnaireController extends Controller
             flash($msg)->error();
             return redirect(route('questionnaires.index', $this->params));
         }
-
-        if (isset($input['answer_once'])) {
-            $input['answer_once'] = true;
-        } else {
-            $input['answer_once'] = false;
-        }
         
-        $inputQuestionnaire = $request->only('name', 'answer_once', 'waiting_time', 'type_waiting_time', 'execution_time', 'type_execution_time');
+        $inputQuestionnaire = $request->only($questionnaire->getFillable());
         
-        if ($input['answer_once']) {
+        if (isset($inputQuestionnaire['answer_once'])) {
             $inputQuestionnaire['answer_once'] = true;
         } else {
             $inputQuestionnaire['answer_once'] = false;
-        } 
+        }
+        
+        if (isset($inputQuestionnaire['is_active'])) {
+            $inputQuestionnaire['is_active'] = true;
+        } else {
+            $inputQuestionnaire['is_active'] = false;
+        }
+        
+        if (isset($inputQuestionnaire['rand_questions'])) {
+            $inputQuestionnaire['rand_questions'] = true;
+        } else {
+            $inputQuestionnaire['rand_questions'] = false;
+        }
                 
         if(!isset($input['checkbox_waiting_time'])) {
             $inputQuestionnaire['waiting_time'] = null;
@@ -230,7 +240,7 @@ class QuestionnaireController extends Controller
                     'description'       => $input['description'][$keyQuestion],
                     'hint'              => isset($input['hint'][$keyQuestion]) ? $input['hint'][$keyQuestion] : null,
                     'is_required'       => isset($input['is_required'][$keyQuestion]) ? true : false,
-                    'is_active'         => isset($input['is_active'][$keyQuestion]) ? true : false,
+                    'is_active'         => isset($input['is_active_question'][$keyQuestion]) ? true : false,
                     'weight'            => $input['weight'][$keyQuestion],
                     'question_type_id'  => $input['question_type_id'][$keyQuestion],
                 ]

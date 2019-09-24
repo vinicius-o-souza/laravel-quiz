@@ -20,5 +20,7 @@
 
 @section('scripts')
     <script src="{{ asset('vendor/pandoapps/js/jquery.min.js') }}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.3/js/adminlte.min.js"></script>
     @stack('scripts_quiz')
 @endsection
