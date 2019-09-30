@@ -349,7 +349,7 @@
                 icon.removeClass('fa-plus');
                 icon.addClass('fa-minus');
             }
-        })
+        });
         
         $(document).on('change', '#answer_once', function () {
             if($('#answer_once').prop('checked')) {

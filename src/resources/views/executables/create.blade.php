@@ -43,7 +43,8 @@
                                         <textarea class="form-control" name="{!! $question->id !!}" id="{!! $question->id !!}" rows="2" {!! $question->is_required ? 'required' : '' !!}></textarea>
                                     @endif
                                 </div>
-                            @endforeach    
+                            @endforeach  
+                            <div class="col-sm-12">{!! $questionnaire->instructions_end !!}</div>  
                             <!-- Submit Field -->
                             <div class="form-group col-sm-12 pt-5">
                                 {!! Form::submit('Responder', ['class' => 'btn btn-primary']) !!}
@@ -51,7 +52,6 @@
                             </div>
                         </div>
                     {!! Form::close() !!}
-                    <div>{!! $questionnaire->instructions_end !!}</div>
                 </div>            
             </div>
         </div>

@@ -123,6 +123,8 @@ class ExecutableController extends Controller
         
         $variables = $request->only(['model_id']);
         $modelId = $variables['model_id'];
+        $this->params['model_id'] = $modelId;
+        
         $questionnaireId = $request->questionnaire_id;
         
         $questionnaire = Questionnaire::find($questionnaireId);

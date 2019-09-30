@@ -25,10 +25,10 @@
                     </div>
                     <hr>
                     <div class="options" id="summary">
-                        @foreach($questionnaire->questions as $question)
+                        @foreach($questionnaire->questions as $key => $question)
                             <div style="padding: 5% 5%">
                                 <div>
-                                    <h3>{{ $question->description }}</h3>
+                                    <h3>{{ $key + 1}}. {{ $question->description }}</h3>
                                     <h5>{{ $executablesSummary[$question->id]['count'] }} respostas</h5>
                                 </div>
                                 @if($question->isClosed())

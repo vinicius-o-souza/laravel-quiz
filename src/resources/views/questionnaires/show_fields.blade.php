@@ -91,20 +91,31 @@
 </div>
 
 <div class="col-sm-12">
-    <div class="card">
-        <div class="card-header">
-            <h4>Questões</h4>
+    <div class="box box-primary box-solid">
+        <div class="box-header with-border">
+            <h2 class="box-title">QUESTÕES</h2>
+            <div class="box-tools pull-right">
+                <button type="button" class="btnCollapse btn btn-primary" type="button" data-toggle="collapse" data-target="#questions_body" aria-expanded="false" aria-controls="questions_body"><i class="fa fa-minus"></i></button>
+            </div>
+            <!-- /.box-tools -->
         </div>
-        <ul class="list-group list-group-flush">
+        <!-- /.box-header -->
+        <div id="questions_body" class="box-body collapse in">
             @foreach ($questionnaire->questions as $key => $question)
-            <li class="list-group-item" id="question_{!! $question->id !!}">
-                <div class="row">
-                    <div class="col-sm-12 col-md-2 d-flex align-items-center">
-                        <h2><b> Questão {!! $key + 1 !!} </b></h2>
+            <div class="questions col-sm-12" id="question_{{ $question->id }}">
+                <div class="box box-primary box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><b> Questão {{ $key + 1 }} </b></h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btnCollapse btn btn-primary" data-toggle="collapse" data-target="#question_body_{{ $question->id }}" aria-expanded="false" aria-controls="question_body_{{ $question->id }}">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <!-- /.box-tools -->
                     </div>
-                    <div class="col-sm-12 col-md-10">
+                    <!-- /.box-header -->
+                    <div id="question_body_{{ $question->id }}" class="box-body collapse">
                         <div class="row">
-                            <!-- Description Field -->
                             <div class="form-group col-sm-12 col-md-6">
                                 <label>Descrição:</label>
                                 <p>{!! $question->description !!}</p>
@@ -130,46 +141,68 @@
                             
                             <!-- Question Type Field -->
                             <div class="form-group col-sm-12 col-md-6">
-                                <label> Tipo da questão: </label>
+                                <label for="question_type_id_{{ $question->id }}">Tipo da Questão:</label>
                                 <p>{!! $question->questionType->name !!}</p>
                             </div>
                             
                             @if ($question->alternatives)
-                                @foreach ($question->alternatives as $key => $alternative)
-                                    <div class="col-sm-12 row alternatives" id="alternative_{!! $alternative->id !!}">
-                                        <hr class="col-sm-12">
-                                        <div class="col-sm-12 col-md-3 d-flex align-items-center">
-                                            <h4><b> Alternativa {!! $key + 1 !!} </b></h4>
+                                <div id="alternatives_block_{{ $question->id }}" class="col-sm-12">
+                                    <div class="box box-primary box-solid">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title"><b>Alternativas</b></h3>
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btnCollapse btn btn-primary" data-toggle="collapse" data-target="#alternatives_body_{{ $question->id }}" aria-expanded="false" aria-controls="alternatives_body_{{ $question->id }}">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <!-- /.box-tools -->
                                         </div>
-                                        <div class="col-sm-12 col-md-9 row">
-                                            <!-- Description Field -->
-                                            <div class="form-group col-sm-12 col-md-6">
-                                                <label>Descrição:</label>
-                                                <p> {!! $alternative->description !!}</p>
-                                            </div>
-                                            
-                                            <!-- Value Field -->
-                                            <div class="form-group col-sm-12 col-md-6">
-                                                <label>Valor da alternativa:</label>
-                                                <p> {!! $alternative->value !!}</p>
-                                            </div>
-                                            
-                                            <!-- Is Correct Field -->
-                                            <div class="form-group col-sm-12 col-md-6">
-                                                <label>Alternativa correta?</label>
-                                                <p>{!! $alternative->is_correct ? 'Sim' : 'Não' !!}</p>
-                                            </div>
+                                        <!-- /.box-header -->
+                                        <div id="alternatives_body_{{ $question->id }}" class="box-body collapse">
+                                            @foreach ($question->alternatives as $key => $alternative)
+                                                <div class="col-sm-12 row alternatives" id="alternative_{!! $alternative->id !!}">
+                                                    <hr class="col-sm-12">
+                                                    <div class="col-sm-12 col-md-3 d-flex align-items-center">
+                                                        <h4><b> Alternativa {!! $key + 1 !!} </b></h4>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-9 row">
+                                                        <!-- Description Field -->
+                                                        <div class="form-group col-sm-12 col-md-6">
+                                                            <label>Descrição:</label>
+                                                            <p> {!! $alternative->description !!}</p>
+                                                        </div>
+                                                        
+                                                        <!-- Value Field -->
+                                                        <div class="form-group col-sm-12 col-md-6">
+                                                            <label>Valor da alternativa:</label>
+                                                            <p> {!! $alternative->value !!}</p>
+                                                        </div>
+                                                        
+                                                        <!-- Is Correct Field -->
+                                                        <div class="form-group col-sm-12 col-md-6">
+                                                            <label>Alternativa correta?</label>
+                                                            <p>{!! $alternative->is_correct ? 'Sim' : 'Não' !!}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach        
                                         </div>
+                                        <!-- /.box-body -->
                                     </div>
-                                @endforeach
+                                    <!-- /.box -->
+                                </div>
                             @endif
                         </div>
                     </div>
+                    <!-- /.box-body -->
                 </div>
-            </li>
+                <!-- /.box -->
+            </div>
             @endforeach
-        </ul>  
-    </div>      
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
 </div>
 
 @push('scripts_quiz')
@@ -181,5 +214,17 @@
         CKEDITOR.replace('instructions_end');
         
         CKEDITOR.config.readOnly = true;
+        
+        $(document).on('click', '.btnCollapse', function() {
+            var icon = $(this).find('i');
+            var parent = icon.parent();
+            if(parent.hasClass('collapsed')) {
+                icon.removeClass('fa-minus');
+                icon.addClass('fa-plus');
+            } else {
+                icon.removeClass('fa-plus');
+                icon.addClass('fa-minus');
+            }
+        });
     </script>
 @endpush
